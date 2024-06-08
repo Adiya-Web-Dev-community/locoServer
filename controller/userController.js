@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const User = require("../model/user");
+const Post=require('../model/post');
+const Mutual=require('../model/mutual');
 const jwt = require("jsonwebtoken");
 const UserRegister = async (req, res) => {
     const { name,email,mobile,password } = req.body;
@@ -53,7 +55,7 @@ const UserLogin = async (req, res) => {
             expiresIn: process.env.JWT_EXPIRE_TIME,
         });
         return res
-        .cookie("Authorization", token, {
+        .cookie("authorization", token, {
           httpOnly: true,
           expires: new Date(Date.now() + 240 * 60 * 60 * 1000),
         })
@@ -66,4 +68,205 @@ const UserLogin = async (req, res) => {
         });
     }
 };
-module.exports = { UserRegister,UserLogin } 
+
+const userPost= async(req,res)=>{
+const { thumnail,content } = req.body;
+
+    try{
+const newPost = new Post({
+    thumnail: thumnail,
+    content: content,
+    userId:req.userId
+});
+
+await newPost.save();
+res.status(201).json({
+    success: true,
+    message: "post created successfully",
+    data:newPost
+});
+    }catch(err){
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+const getAllPost=async(req,res)=>{
+    try{
+        const response=await Post.find();
+        if(!response.length>0){
+            return res
+                .status(404)
+                .json({ success: false, message: "Data Not Found" });
+        }
+        res.status(200).json({
+            success: true,
+            message: "get post Successfully",
+            data:response
+        });
+    }catch(err){
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+const getAllPostByUserId=async(req,res)=>{
+   const userId= req.userId
+    try{
+        const response=await Post.find({userId:userId});
+        console.log("lengthof datah",response?.length)
+        if(!response.length>0){
+            return res
+                .status(404)
+                .json({ success: false, message: "Data Not Found" });
+        }
+        res.status(200).json({
+            success: true,
+            message: "get post Successfully",
+            data:response
+        });
+    }catch(err){
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+const userMutualPost = async (req, res) => {
+  const { name, email, mobile, currentdivision, designation,currentlobby,wantedlobby,wanteddivision } = req.body;
+  const newMutual = new Mutual({
+    userId: req.userId,
+    name: name,
+    email: email,
+    mobile: mobile,
+    currentdivision: currentdivision,
+    designation: designation,
+    currentlobby:currentlobby,
+    wantedlobby:wantedlobby,
+    wanteddivision:wanteddivision,
+  });
+
+  await newMutual.save();
+  res.status(201).json({
+    success: true,
+    message: "post created successfully",
+    data: newMutual,
+  });
+  try {
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+const getAllFormPost=async(req,res)=>{
+    try{
+        const response=await Mutual.find();
+        if(!response.length>0){
+            return res
+                .status(404)
+                .json({ success: false, message: "Data Not Found" });
+        }
+        res.status(200).json({
+            success: true,
+            message: "get post Successfully",
+            data:response
+        });
+    }catch(err){
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+const getAllFormPostByUserId=async(req,res)=>{
+   const userId= req.userId
+    try{
+        const response=await Mutual.find({userId:userId});
+    
+        if(!response.length>0){
+            return res
+                .status(404)
+                .json({ success: false, message: "Data Not Found" });
+        }
+        res.status(200).json({
+            success: true,
+            message: "get post Successfully",
+            data:response
+        });
+    }catch(err){
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+const escapeRegex = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+  };
+const getSeachMutualpostUsingDvision=async(req,res)=>{
+    const { search } = req.query;
+     try{
+        if (!search || search.trim() === "") {
+            return res.send({ success: false, message: "Search query cannot be empty" });
+          }
+        const escapedSearch = escapeRegex(search);
+        const searchRegex = new RegExp(`^${escapedSearch}`, 'i');
+        const response = await Mutual.find({
+            $or: [
+              { currentdivision: searchRegex }
+            ]
+          });
+     
+         if(!response.length>0){
+             return res
+                 .status(404)
+                 .json({ success: false, message: "Data Not Found" });
+         }
+         res.status(200).json({
+             success: true,
+             message: "get post Successfully",
+             data:response
+         });
+     }catch(err){
+         res.status(500).json({
+             success: false,
+             message: err.message,
+         });
+     }
+ }
+ const getSeachMutualpostUsingwantedLobby=async(req,res)=>{
+    const { search } = req.query;
+     try{
+        if (!search || search.trim() === "") {
+            return res.send({ success: false, message: "Search query cannot be empty" });
+          }
+        const escapedSearch = escapeRegex(search);
+        const searchRegex = new RegExp(`^${escapedSearch}`, 'i');
+        const response = await Mutual.find({
+            $or: [
+              { wantedlobby: searchRegex }
+            ]
+          });
+     
+         if(!response.length>0){
+             return res
+                 .status(404)
+                 .json({ success: false, message: "Data Not Found" });
+         }
+         res.status(200).json({
+             success: true,
+             message: "get post Successfully",
+             data:response
+         });
+     }catch(err){
+         res.status(500).json({
+             success: false,
+             message: err.message,
+         });
+     }
+ }
+module.exports = { UserRegister,UserLogin,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingDvision,getSeachMutualpostUsingwantedLobby } 
