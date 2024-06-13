@@ -12,7 +12,17 @@ const userModel = new mongoose.Schema(
         mobile:{type:Number},
         password: {
             type: String,
+        },
+        isVerify:{
+            type:Boolean,
+            default:false
+        },
+        otp:{
+            type:Number
         }
+    },
+    {
+        timestamps:true
     }
 )
 

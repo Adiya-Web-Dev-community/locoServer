@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const usermiddleare=require('../middleware/accoundvalidate');
-const { UserRegister,UserLogin,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingwantedLobby,getSeachMutualpostUsingDvision } = require('../controller/userController');
+const { UserRegister,UserLogin,getUser,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingwantedLobby,getSeachMutualpostUsingDvision } = require('../controller/userController');
 
 
 router.post('/register', UserRegister);
 router.post("/login",UserLogin);
+router.get("/get_myself",usermiddleare,getUser)
 router.post('/post',usermiddleare,userPost);
 router.get('/get-all-post',usermiddleare,getAllPost);
 router.get('/get-post-by-user',usermiddleare,getAllPostByUserId);
