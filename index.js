@@ -9,6 +9,9 @@ mongoose.set("strictQuery", false);
 require("dotenv").config();
 const { Server } = require("socket.io");
 const { createServer } = require("http");
+const usersRoute = require("./route/userRoute");
+const chatsRoute = require("./route/chatsRoute");
+const messagesRoute = require("./route/messagesRoute");
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -29,34 +32,76 @@ mongoose
     console.log("connection failed", err);
   });
 app.use(require("./route/userRoute.js"));
+app.use("/api/users", usersRoute);
+app.use("/api/chats", chatsRoute);
+app.use("/api/messages", messagesRoute);
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
-let onlineUser = [];
-
+let onlineUsers = [];
 io.on("connection", (socket) => {
-  console.log("connection socket Established", socket.id);
-  socket.on("NewUser", (userId) => {
-    !onlineUser.some((user) => user.userId === userId) &&
-      onlineUser.push({
-        userId,
-        socketId: socket.id,
-      });
-    io.emit("getonlineUser", onlineUser);
+
+  socket.on("join-room", (userId) => {
+    socket.join(userId);
   });
-  socket.on("sendMessage", (msg) => {
-    const user = onlineUser?.find((use) => use?.userId === msg?.recipientId);
-    if (user) {
-      io.emit("getMessage", msg);
-      io.emit("getNotification", {
-        senderId: msg?.senderId,
-        isRead: false,
-        date: new Date(),
-      });
+
+
+  socket.on("send-message", (message) => {
+    io.to(message.members[0])
+      .to(message.members[1])
+      .emit("receive-message", message);
+  });
+
+  socket.on("clear-unread-messages", (data) => {
+    io.to(data.members[0])
+      .to(data.members[1])
+      .emit("unread-messages-cleared", data);
+  });
+
+  socket.on("typing", (data) => {
+    io.to(data.members[0]).to(data.members[1]).emit("started-typing", data);
+  });
+
+
+  socket.on("came-online", (userId) => {
+    if (!onlineUsers.includes(userId)) {
+      onlineUsers.push(userId);
     }
+
+    io.emit("online-users-updated", onlineUsers);
   });
-  socket.on("disconnect", () => {
-    onlineUser = onlineUser.filter((user) => user?.userId !== socket.id);
-    io.emit("getonlineUser", onlineUser);
+
+  socket.on("went-offline", (userId) => {
+    onlineUsers = onlineUsers.filter((user) => user !== userId);
+    io.emit("online-users-updated", onlineUsers);
   });
-})
+});
+
+// let onlineUser = [];
+
+// io.on("connection", (socket) => {
+//   console.log("connection socket Established", socket.id);
+//   socket.on("NewUser", (userId) => {
+//     !onlineUser.some((user) => user.userId === userId) &&
+//       onlineUser.push({
+//         userId,
+//         socketId: socket.id,
+//       });
+//     io.emit("getonlineUser", onlineUser);
+//   });
+//   socket.on("sendMessage", (msg) => {
+//     const user = onlineUser?.find((use) => use?.userId === msg?.recipientId);
+//     if (user) {
+//       io.emit("getMessage", msg);
+//       io.emit("getNotification", {
+//         senderId: msg?.senderId,
+//         isRead: false,
+//         date: new Date(),
+//       });
+//     }
+//   });
+//   socket.on("disconnect", () => {
+//     onlineUser = onlineUser.filter((user) => user?.userId !== socket.id);
+//     io.emit("getonlineUser", onlineUser);
+//   });
+// })

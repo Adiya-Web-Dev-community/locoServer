@@ -43,13 +43,13 @@ const UserLogin = async (req, res) => {
         if (!user) {
             return res
                 .status(401)
-                .json({ success: false, message: "Invalid credentials" });
+                .json({ success: false, message: "Invalid Email credentials" });
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res
                 .status(401)
-                .json({ success: false, message: "Invalid credentials" });
+                .json({ success: false, message: "Invalid Password credentials" });
         }
         const token = jwt.sign({ _id: user._id, email:user?.email }, process.env.JWT_SECRET_KEY, {
             expiresIn: process.env.JWT_EXPIRE_TIME,
@@ -87,11 +87,12 @@ const getUser=async(req,res)=>{
     }
 }
 const userPost= async(req,res)=>{
-const { thumnail,content } = req.body;
+const { thumnail,content,mediatype } = req.body;
 
     try{
 const newPost = new Post({
     thumnail: thumnail,
+    mediatype:mediatype,
     content: content,
     userId:req.userId
 });
@@ -111,7 +112,10 @@ res.status(201).json({
 }
 const getAllPost=async(req,res)=>{
     try{
-        const response=await Post.find();
+        const response=await Post.find() .populate({
+            path: 'user',
+            select: '-password -otp'
+          });
         if(!response.length>0){
             return res
                 .status(404)
@@ -265,7 +269,7 @@ const getSeachMutualpostUsingDvision=async(req,res)=>{
         const searchRegex = new RegExp(`^${escapedSearch}`, 'i');
         const response = await Mutual.find({
             $or: [
-              { wantedlobby: searchRegex }
+              { currentlobby: searchRegex }
             ]
           });
      

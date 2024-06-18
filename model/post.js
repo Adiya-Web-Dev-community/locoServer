@@ -3,12 +3,15 @@ const mongoose = require("mongoose");
 const postModel = new mongoose.Schema(
     {
         userId: {
-            type: String,
-            required: true
-        },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user",
+          },
         thumnail: {
             type: String,
           
+        },
+        mediatype:{
+            type:string,
         },
         content: {
             type: String,
