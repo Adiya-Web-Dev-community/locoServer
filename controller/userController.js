@@ -290,4 +290,27 @@ const getSeachMutualpostUsingDvision=async(req,res)=>{
          });
      }
  }
-module.exports = {getUser, UserRegister,UserLogin,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingDvision,getSeachMutualpostUsingwantedLobby } 
+ const UpdateUserProfile=async(req,res)=>{
+    const id=req.userId
+    const data = req.body;
+     try{
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { $set: data },
+            { new: true }
+          );
+      
+          if (!updatedUser) {
+            return res.status(404).send({ message: 'User not found' });
+          }
+      
+          res.status(202).send({success:true, message:"user Updated"});
+     }catch(err){
+         res.status(500).json({
+             success: false,
+             message: err.message,
+         });
+     }
+ }
+
+module.exports = {getUser, UserRegister,UserLogin,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingDvision,getSeachMutualpostUsingwantedLobby,UpdateUserProfile } 

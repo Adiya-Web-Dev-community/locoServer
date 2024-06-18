@@ -11,7 +11,7 @@ const postModel = new mongoose.Schema(
           
         },
         mediatype:{
-            type:string,
+            type:String,
         },
         content: {
             type: String,

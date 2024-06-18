@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const usermiddleare=require('../middleware/accoundvalidate');
-const { UserRegister,UserLogin,getUser,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingwantedLobby,getSeachMutualpostUsingDvision } = require('../controller/userController');
+const { UserRegister,UserLogin,UpdateUserProfile,getUser,userPost,getAllPost,getAllPostByUserId,userMutualPost,getAllFormPost,getAllFormPostByUserId,getSeachMutualpostUsingwantedLobby,getSeachMutualpostUsingDvision } = require('../controller/userController');
 
 
 router.post('/register', UserRegister);
@@ -15,5 +15,6 @@ router.get("/get-all-mutual-post",usermiddleare,getAllFormPost);
 router.get("/get-all-mutual-post-byuser",usermiddleare,getAllFormPostByUserId);
 router.get('/get-search/mutual-using-division',usermiddleare,getSeachMutualpostUsingDvision);
 router.get('/get-search/mutual-using-wantedlobby',usermiddleare,getSeachMutualpostUsingwantedLobby);
+router.put('/user/profile-update',usermiddleare,UpdateUserProfile)
 
 module.exports = router;
