@@ -94,7 +94,7 @@ const newPost = new Post({
     thumnail: thumnail,
     mediatype:mediatype,
     content: content,
-    userId:req.userId
+    user:req.userId
 });
 
 await newPost.save();
@@ -136,7 +136,7 @@ const getAllPost=async(req,res)=>{
 const getAllPostByUserId=async(req,res)=>{
    const userId= req.userId
     try{
-        const response=await Post.find({userId:userId});
+        const response=await Post.find({user:userId});
         console.log("lengthof datah",response?.length)
         if(!response.length>0){
             return res
