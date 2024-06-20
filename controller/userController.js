@@ -298,13 +298,13 @@ const getSeachMutualpostUsingDvision=async(req,res)=>{
             id,
             { $set: data },
             { new: true }
-          );
+          ).select("-password");
       
           if (!updatedUser) {
             return res.status(404).send({ message: 'User not found' });
           }
       
-          res.status(202).send({success:true, message:"user Updated"});
+          res.status(202).send({success:true, message:"user Updated", data:updatedUser});
      }catch(err){
          res.status(500).json({
              success: false,
