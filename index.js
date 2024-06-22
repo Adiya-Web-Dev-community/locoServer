@@ -12,6 +12,7 @@ const { createServer } = require("http");
 const usersRoute = require("./route/userRoute");
 const chatsRoute = require("./route/chatsRoute");
 const messagesRoute = require("./route/messagesRoute");
+const blogRoute=require("./route/admin/blogs.js")
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -35,6 +36,7 @@ app.use(require("./route/userRoute.js"));
 app.use("/api/users", usersRoute);
 app.use("/api/chats", chatsRoute);
 app.use("/api/messages", messagesRoute);
+app.use("/api/admin",blogRoute);
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
