@@ -15,10 +15,27 @@ const {
   deleteSubCategory,
   deleteSubSubCategory,
   deleteInnerCategory,
+  createBlogMainCategory,
+  createBlogSubCategory,
+  createBlogSubSubCategory,
+  createBlogInnerCategory,
+  CreateBlogs,GetUserBlog
 } = require("../../controller/admin/blogs");
 
+router.get("/blog/userblog",GetUserBlog)
+router.post("/blog/create-blogs",CreateBlogs)
+router.post("/blog/create-blog-innercategory",createBlogInnerCategory)
+router.post("/blog/createblogsubcategory",createBlogSubCategory);
+router.post("/blog/blog-subsubcategory",createBlogSubSubCategory)
+router.post("/blog/createmain",createBlogMainCategory)
+
+
+
 router.post("/main-category", createMainCategory);
+
+
 router.post("/sub-category/:mainCategoryId", createSubCategory);
+
 router.post(
   "/sub-sub-category/:mainCategoryId/:subCategoryId",
   createSubSubCategory
