@@ -580,7 +580,77 @@ const GetUserBlog = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+const GetAllBlogs = async (req, res) => {
+  try {
+    const response = await Blog.find();
+    if (!response.length > 0) {
+      res.status(404).json(" Blog Not Found");
+    }
+    res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+const UpdateBlogById = async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  try {
+    const response = await Blog.findByIdAndUpdate(
+      id,
+      {
+        ...data,
+      },
+      { new: true }
+    );
+    if (!response) {
+      res.status(403).json(" Blog Not Updated");
+    }
+    res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+const DeleteBlogById = async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const response = await Blog.findByIdAndDelete(id);
+    if (!response) {
+      return res
+        .status(404)
+        .json({ succcess: false, message: " Blog Not Found" });
+    }
+    res.status(200).json({ success: true, mesaage: "Blog Delete" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+const GetBlogById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await Blog.findById(id);
+    if (!response) {
+      res.status(404).json(" Blog Not Found");
+    }
+    res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+const GetBlogBySlug = async (req, res) => {
+  const { slug } = req.params;
+
+  try {
+    const response = await Blog.findOne({ slug: slug });
+    if (!response) {
+      res.status(404).json(" Blog Not Found");
+    }
+    res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   createMainCategory,
   createSubCategory,
@@ -602,4 +672,9 @@ module.exports = {
   createBlogInnerCategory,
   CreateBlogs,
   GetUserBlog,
+  GetAllBlogs,
+  DeleteBlogById,
+  UpdateBlogById,
+  GetBlogById,
+  GetBlogBySlug,
 };

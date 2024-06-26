@@ -19,16 +19,26 @@ const {
   createBlogSubCategory,
   createBlogSubSubCategory,
   createBlogInnerCategory,
-  CreateBlogs,GetUserBlog
+  CreateBlogs,GetUserBlog,
+  GetAllBlogs,
+  DeleteBlogById,
+  UpdateBlogById,
+  GetBlogById,
+  GetBlogBySlug
 } = require("../../controller/admin/blogs");
 
-router.get("/blog/userblog",GetUserBlog)
-router.post("/blog/create-blogs",CreateBlogs)
-router.post("/blog/create-blog-innercategory",createBlogInnerCategory)
+router.get("/blog/userblog",GetUserBlog);
+router.post("/blog/create-blogs",CreateBlogs);
+router.post("/blog/create-blog-innercategory",createBlogInnerCategory);
 router.post("/blog/createblogsubcategory",createBlogSubCategory);
-router.post("/blog/blog-subsubcategory",createBlogSubSubCategory)
-router.post("/blog/createmain",createBlogMainCategory)
+router.post("/blog/blog-subsubcategory",createBlogSubSubCategory);
+router.post("/blog/createmain",createBlogMainCategory);
 
+router.get("/blog/getallblogs",GetAllBlogs)
+router.put("/blog/update-blog/:id",UpdateBlogById);
+router.delete("/blog/delete-blog/:id",DeleteBlogById);
+router.get("/blog/get-blog-using-Id/:id",GetBlogById);
+router.get("/blog/get-blog-by-slug/:slug",GetBlogBySlug);
 
 
 router.post("/main-category", createMainCategory);
