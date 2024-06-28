@@ -68,24 +68,24 @@ const UserLogin = async (req, res) => {
         });
     }
 };
-const getUser=async(req,res)=>{
-    try{
-        const user = await User.findById(req.userId).select("-password").select("-otp");
-        if(!user){
+    const getUser=async(req,res)=>{
+        try{
+            const user = await User.findById(req.userId).select("-password").select("-otp");
+            if(!user){
+                return res
+            .status(403)
+            .json({ success: false,message:"user Not Found" });
+            }
             return res
-        .status(403)
-        .json({ success: false,message:"user Not Found" });
+            .status(200)
+            .json({ success: true,data:user });
+        }catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message,
+            });
         }
-        return res
-        .status(200)
-        .json({ success: true,data:user });
-    }catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
     }
-}
 const userPost= async(req,res)=>{
 const { thumnail,content,mediatype } = req.body;
 
