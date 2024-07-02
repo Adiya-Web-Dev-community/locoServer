@@ -4,10 +4,11 @@ const Blog = require("../../model/blogs/blogModules");
 
 const createMainCategory = async (req, res) => {
   try {
+    
     const { name } = req.body;
     const mainCategory = new BlogCategoryModel({ name });
     await mainCategory.save();
-    res.status(201).json(mainCategory);
+    res.status(201).json({success:true, data:mainCategory, message:"category created"});
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -25,7 +26,7 @@ const createSubCategory = async (req, res) => {
 
     mainCategory.subCategories.push({ name });
     await mainCategory.save();
-    res.status(201).json({ success: false, data: mainCategory });
+    res.status(201).json({ success: true, data: mainCategory,message: "Sub Category saved" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -49,7 +50,7 @@ const createSubSubCategory = async (req, res) => {
 
     subCategory.subSubCategories.push({ name });
     await mainCategory.save();
-    res.status(201).json({ success: false, data: mainCategory });
+    res.status(201).json({ success: true, data: mainCategory, message:"Saved Sub Sub-category" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -79,7 +80,7 @@ const createInnerCategory = async (req, res) => {
 
     subSubCategory.innerCategories.push({ name });
     await mainCategory.save();
-    res.status(201).json({ success: true, data: mainCategory });
+    res.status(200).json({ success: true, data: mainCategory, message:"inner category saved" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -96,7 +97,7 @@ const updateMainCategory = async (req, res) => {
     );
     if (!mainCategory)
       return res.status(404).json({ message: "Main Category not found" });
-    res.status(200).json({ success: true, data: mainCategory });
+    res.status(200).json({ success: true,message: "Main Category updated", data: mainCategory });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -108,15 +109,15 @@ const updateSubCategory = async (req, res) => {
     const { name } = req.body;
     const mainCategory = await BlogCategoryModel.findById(mainCategoryId);
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
+      return res.status(404).json({success:false,  message: "Main Category not found" });
 
     const subCategory = mainCategory.subCategories.id(subCategoryId);
     if (!subCategory)
-      return res.status(404).json({ message: "Sub Category not found" });
+      return res.status(404).json({ success:false, message: "Sub Category not found" });
 
     subCategory.name = name;
     await mainCategory.save();
-    res.status(200).json(mainCategory);
+    res.status(200).json({success:true,data:mainCategory, message:"Sub Category Update"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -128,19 +129,19 @@ const updateSubSubCategory = async (req, res) => {
     const { name } = req.body;
     const mainCategory = await BlogCategoryModel.findById(mainCategoryId);
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
+      return res.status(404).json({success:false, message: "Main Category not found" });
 
     const subCategory = mainCategory.subCategories.id(subCategoryId);
     if (!subCategory)
-      return res.status(404).json({ message: "Sub Category not found" });
+      return res.status(404).json({success:false, message: "Sub Category not found" });
 
     const subSubCategory = subCategory.subSubCategories.id(subSubCategoryId);
     if (!subSubCategory)
-      return res.status(404).json({ message: "Sub Sub-Category not found" });
+      return res.status(404).json({success:false, message: "Sub Sub-Category not found" });
 
     subSubCategory.name = name;
     await mainCategory.save();
-    res.status(200).json(mainCategory);
+    res.status(203).json({success:true,data:mainCategory, message:"Sub Sub-Category Updated"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -153,23 +154,23 @@ const updateInnerCategory = async (req, res) => {
     const { name } = req.body;
     const mainCategory = await BlogCategoryModel.findById(mainCategoryId);
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
+      return res.status(404).json({success:false, message: "Main Category not found" });
 
     const subCategory = mainCategory.subCategories.id(subCategoryId);
     if (!subCategory)
-      return res.status(404).json({ message: "Sub Category not found" });
+      return res.status(404).json({success:false, message: "Sub Category not found" });
 
     const subSubCategory = subCategory.subSubCategories.id(subSubCategoryId);
     if (!subSubCategory)
-      return res.status(404).json({ message: "Sub Sub-Category not found" });
+      return res.status(404).json({success:false, message: "Sub Sub-Category not found" });
 
     const innerCategory = subSubCategory.innerCategories.id(innerCategoryId);
     if (!innerCategory)
-      return res.status(404).json({ message: "Inner Category not found" });
+      return res.status(404).json({success:false, message: "Inner Category not found" });
 
     innerCategory.name = name;
     await mainCategory.save();
-    res.status(200).json(mainCategory);
+    res.status(200).json({success:true,data:mainCategory, message:"inner category updated"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -182,8 +183,8 @@ const deleteMainCategory = async (req, res) => {
       mainCategoryId
     );
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
-    res.status(200).json({ message: "Main Category deleted" });
+      return res.status(404).json({success:false, message: "Main Category not found" });
+    res.status(200).json({success:true, message: "Main Category deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -194,15 +195,15 @@ const deleteSubCategory = async (req, res) => {
     const { mainCategoryId, subCategoryId } = req.params;
     const mainCategory = await BlogCategoryModel.findById(mainCategoryId);
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
+      return res.status(404).json({success:false, message: "Main Category not found" });
 
     const subCategory = mainCategory.subCategories.id(subCategoryId);
     if (!subCategory)
-      return res.status(404).json({ message: "Sub Category not found" });
+      return res.status(404).json({success:false, message: "Sub Category not found" });
 
     subCategory.deleteOne();
     await mainCategory.save();
-    res.status(200).json(mainCategory);
+    res.status(200).json({success:true, message:"sub category deleted"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -213,19 +214,19 @@ const deleteSubSubCategory = async (req, res) => {
     const { mainCategoryId, subCategoryId, subSubCategoryId } = req.params;
     const mainCategory = await BlogCategoryModel.findById(mainCategoryId);
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
+      return res.status(404).json({success:false, message: "Main Category not found" });
 
     const subCategory = mainCategory.subCategories.id(subCategoryId);
     if (!subCategory)
-      return res.status(404).json({ message: "Sub Category not found" });
+      return res.status(404).json({success:false, message: "Sub Category not found" });
 
     const subSubCategory = subCategory.subSubCategories.id(subSubCategoryId);
     if (!subSubCategory)
-      return res.status(404).json({ message: "Sub Sub-Category not found" });
+      return res.status(404).json({success:false, message: "Sub Sub-Category not found" });
 
     subSubCategory.deleteOne();
     await mainCategory.save();
-    res.status(200).json(mainCategory);
+    res.status(200).json({success:true, message: "Sub Sub-Category deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -237,30 +238,30 @@ const deleteInnerCategory = async (req, res) => {
       req.params;
     const mainCategory = await BlogCategoryModel.findById(mainCategoryId);
     if (!mainCategory)
-      return res.status(404).json({ message: "Main Category not found" });
+      return res.status(404).json({success:false, message: "Main Category not found" });
 
     const subCategory = mainCategory.subCategories.id(subCategoryId);
     if (!subCategory)
-      return res.status(404).json({ message: "Sub Category not found" });
+      return res.status(404).json({success:false, message: "Sub Category not found" });
 
     const subSubCategory = subCategory.subSubCategories.id(subSubCategoryId);
     if (!subSubCategory)
-      return res.status(404).json({ message: "Sub Sub-Category not found" });
+      return res.status(404).json({success:false, message: "Sub Sub-Category not found" });
 
     const innerCategory = subSubCategory.innerCategories.id(innerCategoryId);
     if (!innerCategory)
-      return res.status(404).json({ message: "Inner Category not found" });
+      return res.status(404).json({success:false, message: "Inner Category not found" });
 
     innerCategory.deleteOne();
     await mainCategory.save();
-    res.status(200).json(mainCategory);
+    res.status(200).json({success:true,message:"inner category deleted"});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 const GetBlogCategory = async (req, res) => {
   try {
-    const response = await BlogCategoryModel.find();
+    const response = await BlogCategoryModel.find().sort({ createdAt: -1 });
     if (!response)
       return res
         .status(404)
@@ -489,10 +490,10 @@ const CreateBlogs = async (req, res) => {
       innercategory,
       title,
       slug,
-      thumbnail,
+      thumnail,
       content,
     } = req.body;
-
+console.log("thumbnail>>",thumnail)
     const userBlog = await UserBlogs.findOneAndUpdate(
       { name: maincategory },
       { $setOnInsert: { name: maincategory } },
@@ -530,7 +531,7 @@ const CreateBlogs = async (req, res) => {
         )
       : null;
 
-    const blog = await Blog.create({ title, slug, thumbnail, content });
+    const blog = await Blog.create({ title, slug, thumnail, content });
 
     if (innerCatIndex !== null) {
       userBlog.subCategories[subCatIndex].subSubCategories[
@@ -547,7 +548,7 @@ const CreateBlogs = async (req, res) => {
     }
 
     await userBlog.save();
-    res.status(201).json(userBlog);
+    res.status(201).json({success:true,data:userBlog,message:"Blog Created"});
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -583,8 +584,8 @@ const GetUserBlog = async (req, res) => {
 const GetAllBlogs = async (req, res) => {
   try {
     const response = await Blog.find();
-    if (!response.length > 0) {
-      res.status(404).json(" Blog Not Found");
+    if (response.length < 1) {
+      res.status(404).json({success:false,message:" Blog Not Found"});
     }
     res.status(200).json({ success: true, data: response });
   } catch (error) {
@@ -603,9 +604,9 @@ const UpdateBlogById = async (req, res) => {
       { new: true }
     );
     if (!response) {
-      res.status(403).json(" Blog Not Updated");
+      res.status(403).json({success:false,message:" Blog Not Updated"});
     }
-    res.status(200).json({ success: true, data: response });
+    res.status(200).json({ success: true, data: response, message:'blog Updated' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -620,7 +621,7 @@ const DeleteBlogById = async (req, res) => {
         .status(404)
         .json({ succcess: false, message: " Blog Not Found" });
     }
-    res.status(200).json({ success: true, mesaage: "Blog Delete" });
+    res.status(200).json({ success: true, message: "Blog Delete" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

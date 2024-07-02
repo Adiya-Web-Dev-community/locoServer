@@ -28,11 +28,11 @@ const {
 } = require("../../controller/admin/blogs");
 
 router.get("/blog/userblog",GetUserBlog);
-router.post("/blog/create-blogs",CreateBlogs);
-router.post("/blog/create-blog-innercategory",createBlogInnerCategory);
-router.post("/blog/createblogsubcategory",createBlogSubCategory);
-router.post("/blog/blog-subsubcategory",createBlogSubSubCategory);
-router.post("/blog/createmain",createBlogMainCategory);
+router.post("/blog/create-blogs",CreateBlogs); 
+// router.post("/blog/create-blog-innercategory",createBlogInnerCategory);
+// router.post("/blog/createblogsubcategory",createBlogSubCategory);
+// router.post("/blog/blog-subsubcategory",createBlogSubSubCategory);
+// router.post("/blog/createmain",createBlogMainCategory);
 
 router.get("/blog/getallblogs",GetAllBlogs)
 router.put("/blog/update-blog/:id",UpdateBlogById);

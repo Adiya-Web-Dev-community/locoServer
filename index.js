@@ -13,7 +13,8 @@ const usersRoute = require("./route/userRoute");
 const chatsRoute = require("./route/chatsRoute");
 const messagesRoute = require("./route/messagesRoute");
 const blogRoute=require("./route/admin/blogs.js")
-const videoRoute=require("./route/admin/video.js")
+const videoRoute=require("./route/admin/video.js");
+const adminRoute=require("./route/admin/adminRoute.js")
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -22,6 +23,13 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, 
+  allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+}));
+
 app.get('/', (req, res) => {
   res.send('WebSocket server is running');
 });
@@ -39,6 +47,7 @@ app.use("/api/chats", chatsRoute);
 app.use("/api/messages", messagesRoute);
 app.use("/api/admin",blogRoute);
 app.use("/api/admin",videoRoute);
+app.use("/api/admin",adminRoute)
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

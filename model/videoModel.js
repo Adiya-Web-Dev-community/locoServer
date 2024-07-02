@@ -6,6 +6,10 @@ const videoModel = new mongoose.Schema(
       type: String,
       require:true
     },
+    slug:{
+      type:String,
+      require:true
+    },
     category:{
         type:String,
         require:true
@@ -13,6 +17,9 @@ const videoModel = new mongoose.Schema(
     url:{
         type:String,
         require:true
+    },
+    tags:{
+      type:String
     },
     dectription:{
         type:String

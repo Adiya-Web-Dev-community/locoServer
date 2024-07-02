@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-export const checkRole = (requiredRole) => (req, res, next) => {
+ const checkRole = (requiredRole) => (req, res, next) => {
   const authToken = req.headers.authorization;
   const cookieToken = req?.cookies?.authorization;
   let token;
@@ -40,5 +40,6 @@ export const checkRole = (requiredRole) => (req, res, next) => {
   }
 };
 
-export const isAdmin = checkRole("admin");
-export const isUser = checkRole("user");
+ const isAdmin = checkRole("admin");
+ const isUser = checkRole("user");
+ module.exports = {isAdmin,isUser};

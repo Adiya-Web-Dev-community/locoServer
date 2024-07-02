@@ -18,6 +18,8 @@ const SubCategorySchema = new Schema({
 const BlogCategorySchema = new Schema({
   name: { type: String, required: true },
   subCategories: [SubCategorySchema]
+},{
+  timestamps:true
 });
 
 const BlogCategory = mongoose.model('BlogCategory', BlogCategorySchema);
