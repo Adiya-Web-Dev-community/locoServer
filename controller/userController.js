@@ -5,7 +5,7 @@ const Post=require('../model/post');
 const Mutual=require('../model/mutual');
 const jwt = require("jsonwebtoken");
 const UserRegister = async (req, res) => {
-    const { name,email,mobile,password } = req.body;
+    const { image,name,email,mobile,password } = req.body;
     try {
         const user = await User.findOne({ email: email });
         if (user) {
@@ -16,6 +16,7 @@ const UserRegister = async (req, res) => {
         }
         const hashPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
+            image:image,
             name: name,
             email: email,
             mobile:mobile,

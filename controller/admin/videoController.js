@@ -69,7 +69,7 @@ const UploadVideo = async (req, res) => {
 const GetALLVideo = async (req, res) => {
   try {
     const response = await Video.find();
-    if (!response) {
+    if (!response.length>0) {
       res.status(404).json({ success: false, message: "Video not found" });
     } else {
       res.status(200).json( response );
@@ -100,7 +100,7 @@ const GetVideoById = async (req, res) => {
     if (!response) {
       res.status(404).json({ success: false, message: "Video not found" });
     } else {
-      res.status(200).json({ success: true, data: response });
+      res.status(200).json( response);
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -117,7 +117,7 @@ const UpdateVideo = async (req, res) => {
     if (!response) {
       res.status(404).json({ success: false, message: "Video not found" });
     } else {
-      res.status(203).json({ success: true, data: response });
+      res.status(203).json({ success: true, data: response, message:"Video updated" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

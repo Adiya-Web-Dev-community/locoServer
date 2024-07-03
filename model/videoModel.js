@@ -21,7 +21,7 @@ const videoModel = new mongoose.Schema(
     tags:{
       type:String
     },
-    dectription:{
+    description:{
         type:String
     }
   },
