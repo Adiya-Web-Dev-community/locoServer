@@ -6,6 +6,7 @@ const SendOTP=require("../../email-templates/sendOtpMail")
 const LogInFailAlert=require("../../email-templates/login-failed-alert");
 const ChangePasswordFail_Alert=require("../../email-templates/password-change-alert");
 const jwt = require("jsonwebtoken");
+const { promises } = require("nodemailer/lib/xoauth2");
 const UserRegister = async (req, res) => {
   const { name, email, mobile, password, role } = req.body;
   try {
@@ -181,8 +182,13 @@ const getAllUsers = async (req, res) => {
                 .json({ success: false, message: "Invalid Email credentials" });
         }
         await User.findByIdAndUpdate(user._id, {otp:OTP}, { new: true });
-    
-        SendOTP(email,OTP)
+      const  sentmail=await SendOTP(email, OTP)
+       if(!sentmail.success){
+        return res
+        .status(403)
+        .json({ success: false, message: "Something Went Wrong While Sending OTP " });
+       }
+   
         return res
         .status(200)
         .json({ success: true, message: "OTP has been sent on you email " });
