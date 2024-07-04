@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const User = require("../../model/user");
-
+const Alert=require("../../email-templates/alert")
+const SendOTP=require("../../email-templates/sendOtpMail")
+const LogInFailAlert=require("../../email-templates/login-failed-alert");
+const ChangePasswordFail_Alert=require("../../email-templates/password-change-alert");
 const jwt = require("jsonwebtoken");
 const UserRegister = async (req, res) => {
   const { name, email, mobile, password, role } = req.body;
@@ -163,4 +166,51 @@ const getAllUsers = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
-module.exports = {getUser, UserRegister,UserLogin,getAllUsers,getUserById,UpdateUser,deleteUser } 
+
+
+  const ForGetPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const min = 100000;
+        const max = 999999;
+        const OTP = Math.floor(Math.random() * (max - min + 1)) + min;
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res
+                .status(401)
+                .json({ success: false, message: "Invalid Email credentials" });
+        }
+        await User.findByIdAndUpdate(user._id, {otp:OTP}, { new: true });
+    
+        SendOTP(email,OTP)
+        return res
+        .status(200)
+        .json({ success: true, message: "OTP has been sent on you email " });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+const VeriFyOTP = async (req, res) => {
+  try {
+      const {otp, email, newPassword } = req.body;
+
+      const user = await User.findOne({ email, otp });
+
+      if (!findUser) {
+          ChangePasswordFail_Alert(email);
+          return res.status(401).json({success:false, message: "Invalid OTP or email." });
+      }
+      const hashPassword = await bcrypt.hash(newPassword, 10);
+      const response=await User.findByIdAndUpdate(user._id, {password:hashPassword}, { new: true });
+      if(!response)return res.status(401).json({ success:false, message: "password Not Update" });
+      res.status(200).json({success:true, message: "Password has been changed", });
+
+  } catch (error) {
+      res.status(500).json({ error: error.message, message: "Something went wrong..." });
+  }
+};
+module.exports = {getUser, UserRegister,UserLogin,getAllUsers,getUserById,UpdateUser,deleteUser,ForGetPassword,VeriFyOTP } 
