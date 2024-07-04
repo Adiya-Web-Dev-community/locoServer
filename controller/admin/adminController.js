@@ -200,7 +200,7 @@ const VeriFyOTP = async (req, res) => {
 
       const user = await User.findOne({ email, otp });
 
-      if (!findUser) {
+      if (!user) {
           ChangePasswordFail_Alert(email);
           return res.status(401).json({success:false, message: "Invalid OTP or email." });
       }
