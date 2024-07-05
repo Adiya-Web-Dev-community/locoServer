@@ -25,6 +25,20 @@ const Create = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
+  const getSingle = async (req, res) => {
+    const {id}=req.params
+    try {
+      const response = await ImportantLinks.findById(id);
+      if (!response) {
+        return res
+          .status(200)
+          .json({ success: false, mesaage: "Important Links/Document Not Found" });
+      }
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
   const Update= async (req, res) => {
     try {
       const response = await ImportantLinks.findByIdAndUpdate(
@@ -66,6 +80,7 @@ const Create = async (req, res) => {
     Create,
     getAll,
     Update,
-    Delete
+    Delete,
+    getSingle
   };
   

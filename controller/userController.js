@@ -80,7 +80,7 @@ const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.userId)
       .select("-password")
-      .select("-otp");
+      .select("-otp").populate("savePosts");
     if (!user) {
       return res
         .status(403)
@@ -121,9 +121,14 @@ const userPost = async (req, res) => {
 const getAllPost = async (req, res) => {
   try {
     const response = await Post.find().populate({
-      path: "user",
-      select: "-password -otp",
-    });
+        path: 'user',
+        select: '-password -otp',
+      })
+      .populate({
+        path: 'comments.comment_user',
+        select: '-password -otp',
+      });
+
     if (!response.length > 0) {
       return res
         .status(404)
@@ -217,6 +222,60 @@ const getAllFormPost = async (req, res) => {
     res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+};
+const LikePosts = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const post = await Post.findByIdAndUpdate(
+      id,
+      { $inc: { like: 1 } },
+      { new: true } 
+    );
+
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Post liked successfully',
+      data: post,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const CommentPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { comment } = req.body;
+const userId=req.userId
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
+
+    const newComment = { comment:comment, comment_user:userId };
+    post.comments.push(newComment);
+    await post.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Comment added successfully',
+      data: post,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
@@ -333,7 +392,36 @@ const UpdateUserProfile = async (req, res) => {
     });
   }
 };
+const savePostInUser = async (req, res) => {
+  const id = req.userId;
 
+  try {
+    const { postId } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { savePosts: postId },
+      { new: true }
+    ).populate("savePosts");
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Saved post updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   getUser,
   UserRegister,
@@ -347,4 +435,7 @@ module.exports = {
   getSeachMutualpostUsingDvision,
   getSeachMutualpostUsingwantedLobby,
   UpdateUserProfile,
+  LikePosts,
+  CommentPost,
+  savePostInUser
 };

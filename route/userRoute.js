@@ -15,6 +15,9 @@ const {
   getAllFormPostByUserId,
   getSeachMutualpostUsingwantedLobby,
   getSeachMutualpostUsingDvision,
+  LikePosts,
+  savePostInUser,
+  CommentPost
 } = require("../controller/userController");
 const { getAll } = require("../controller/admin/implinks.Controller");
 const {
@@ -82,5 +85,11 @@ router.get("/sponsor/product/:id", isUser, getSingleProduct);
 router.get("/video/get-category", isUser, getAllVideoCategory);
 router.get("/video/get-video-bycategory/:category", isUser, GetVideoByCategory);
 router.get("/video/get-video-byid/:id", isUser, GetVideoById);
+
+//like and comment and save posts
+router.post("/post/like/:id",isUser,LikePosts);
+router.post("/post/comment/:id",isUser,CommentPost);
+router.put("/savepost",isUser,savePostInUser);
+
 
 module.exports = router;
