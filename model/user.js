@@ -20,6 +20,12 @@ const userModel = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    division:{
+      type:String
+    },
+    designation:{
+      type:String
+    },
     otp: {
       type: Number,
     },

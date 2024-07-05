@@ -5,9 +5,9 @@ const awarenessCategoryModel = new mongoose.Schema(
     name: {
       type: String,
     },
-  },
-  {
-    timestamps: true,
+    image:{
+      type:String,
+    }
   }
 );
 

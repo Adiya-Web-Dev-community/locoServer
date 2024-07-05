@@ -15,7 +15,9 @@ const messagesRoute = require("./route/messagesRoute");
 const blogRoute=require("./route/admin/blogs.js")
 const videoRoute=require("./route/admin/video.js");
 const adminRoute=require("./route/admin/adminRoute.js");
-const awarenessRoute=require("./route/admin/awarenessRoute.js")
+const awarenessRoute=require("./route/admin/awarenessRoute.js");
+const importantLinks=require("./route/admin/implinksRoute.js");
+const sponsorRoute=require("./route/admin/sponsorRoute.js")
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -49,7 +51,9 @@ app.use("/api/messages", messagesRoute);
 app.use("/api/admin",blogRoute);
 app.use("/api/admin",videoRoute);
 app.use("/api/admin",adminRoute)
-app.use("/api/admin",awarenessRoute)
+app.use("/api/admin",awarenessRoute);
+app.use("/api/admin",importantLinks);
+app.use("/api/admin",sponsorRoute);
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
