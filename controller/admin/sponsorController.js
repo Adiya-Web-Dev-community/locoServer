@@ -38,7 +38,7 @@ const getSinglecompany = async (req, res) => {
     const {id}=req.params
     try {
       const response = await SponsorCompany.findById(id).populate("products");
-      if (!response?.length > 0) {
+      if (!response) {
         return res
           .status(403)
           .json({ success: false, message: "Sponsor Company Not Found" });

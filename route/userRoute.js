@@ -70,7 +70,7 @@ router.get("/important_link", isUser, getAll);
 //awareness
 router.get("/awareness/category", isUser, getAllCategory);
 router.get("/awareness/:id", isUser, getAwarenessById);
-router.get("/awareness/:category", isUser, getAwarenessByCategory);
+router.get("/awareness/category/:category", isUser, getAwarenessByCategory);
 
 //blog
 router.get("/blog/userblog", isUser, GetUserBlog);

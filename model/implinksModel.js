@@ -2,9 +2,13 @@ const mongoose = require("mongoose");
 
 const ImportantLinks = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      required:true
+    },
     link: {
       type: String,
-      require:true
+      required: true,
     },
     donwloadable: {
       type: Boolean,
