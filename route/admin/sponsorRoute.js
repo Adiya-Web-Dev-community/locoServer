@@ -16,7 +16,7 @@ router.post("/sponsor/product",isAdmin,createProduct);
 router.get("/sponsor/product",isAdmin,getAllProsucts);
 router.get("/sponsor/product/:id",isAdmin,getSingleProduct);
 router.put("/sponsor/product/:id",isAdmin,UpdateProduct);
-router.put("/sponsor/product/:id",isAdmin,deleteProduct);
+router.delete("/sponsor/product/:id",isAdmin,deleteProduct);
 
 
 module.exports = router;

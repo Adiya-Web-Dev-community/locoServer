@@ -10,7 +10,6 @@ router.get("/quiz/:id", isAdmin, getSingleQuiz);
 router.put("/quiz/:id", isAdmin, UpdateQuiz);
 router.delete("/quiz/:id", isAdmin, deleteQuiz);
 
-
 //Quiz Questions
 router.post("/quiz/question", isAdmin, CreatQuizQuestiond);
 router.post("/quiz/question/:id", isAdmin, UpdateQuizQuestion);
