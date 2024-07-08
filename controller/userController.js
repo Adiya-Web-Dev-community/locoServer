@@ -4,6 +4,10 @@ const User = require("../model/user");
 const Post = require("../model/post");
 const Mutual = require("../model/mutual");
 const jwt = require("jsonwebtoken");
+const TestYourSelf=require("../model/test_yourself/text_yourself");
+const TestYourSelfQuestion=require("../model/test_yourself/testYourSelfQuestionModel");
+const Quiz=require("../model/quiz/quizModel")
+const QuizQuestion=require("../model/quiz/quizquestions")
 const UserRegister = async (req, res) => {
   const { image, name, email, mobile, password, designation, division } =
     req.body;
@@ -422,6 +426,184 @@ const savePostInUser = async (req, res) => {
     });
   }
 };
+const getAllQuiz = async (req, res) => {
+  try {
+    const response = await Quiz.find().populate("questions");
+    if (!response?.length > 0) {
+      return res
+        .status(200)
+        .json({ success: false, mesaage: "Quiz Not Found" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getSingleQuiz = async (req, res) => {
+  const {id}=req.params
+  try {
+    const response = await Quiz.findById(id).populate("questions");
+    if (!response) {
+      return res
+        .status(200)
+        .json({ success: false, mesaage: "Quiz Not Found" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getAllTest = async (req, res) => {
+  try {
+    const response = await TestYourSelf.find().populate("questions");
+    if (!response?.length > 0) {
+      return res
+        .status(200)
+        .json({ success: false, mesaage: "Test Not Found" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getSingleTest = async (req, res) => {
+  const {id}=req.params
+  try {
+    const response = await TestYourSelf.findById(id).populate("questions");
+    if (!response) {
+      return res
+        .status(200)
+        .json({ success: false, mesaage: "Test Not Found" });
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const UpdateAnswer = async (req, res) => {
+  const {id}=req.params
+  const {answer}=req.body
+  try {
+    const question = await QuizQuestion.findById(id);
+
+    if (!question) {
+      return res.status(404).json({ success: false, message: 'Question not found' });
+    }
+
+    question.actualresult = answer;
+    question.isTrue = (answer === question.predicted_result);
+
+    await question.save();
+
+    res.status(200).json({
+      success: true,
+      data: question,
+      message: 'Answer submitted successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const QuizComplete = async (req, res) => {
+  const {id}=req.params
+  try {
+    const quiz = await Quiz.findById(id).populate('questions');
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: 'Quiz not found' });
+    }
+    const answeredQuestions = quiz?.questions.filter(q => q.isTrue !== undefined);
+    const rightAnswers = answeredQuestions.filter(q => q.isTrue).length;
+    const wrongAnswers = answeredQuestions.length - rightAnswers;
+    const score = (rightAnswers / quiz.questions.length) * 100;
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      id,
+      {
+        rightanswers: rightAnswers,
+        wronganswers: wrongAnswers,
+        score: score,
+        isComplete: true,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Quiz results updated successfully',
+      data: updatedQuiz,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+ 
+};
+const UpdateTestAnswer = async (req, res) => {
+  const {id}=req.params
+  const {answer}=req.body
+  try {
+    const question = await TestYourSelfQuestion.findById(id);
+
+    if (!question) {
+      return res.status(404).json({ success: false, message: 'Question not found' });
+    }
+
+    question.actualresult = answer;
+    question.isTrue = (answer === question.predicted_result);
+
+    await question.save();
+
+    res.status(200).json({
+      success: true,
+      data: question,
+      message: 'Answer submitted successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const TestComplete = async (req, res) => {
+  const {id}=req.params
+  try {
+    const quiz = await TestYourSelf.findById(id).populate('questions');
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: 'Test not found' });
+    }
+    const answeredQuestions = quiz?.questions.filter(q => q.isTrue !== undefined);
+    const rightAnswers = answeredQuestions.filter(q => q.isTrue).length;
+    const wrongAnswers = answeredQuestions.length - rightAnswers;
+    const score = (rightAnswers / quiz.questions.length) * 100;
+    const resp = await TestYourSelf.findByIdAndUpdate(
+      id,
+      {
+        rightanswers: rightAnswers,
+        wronganswers: wrongAnswers,
+        score: score,
+        isComplete: true,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Test results updated successfully',
+      data: resp,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+ 
+};
 module.exports = {
   getUser,
   UserRegister,
@@ -437,5 +619,13 @@ module.exports = {
   UpdateUserProfile,
   LikePosts,
   CommentPost,
-  savePostInUser
+  savePostInUser,
+  getAllQuiz,
+  getSingleQuiz,
+  getAllTest,
+  getSingleTest,
+  UpdateAnswer,
+  QuizComplete,
+  UpdateTestAnswer,
+  TestComplete
 };

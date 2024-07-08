@@ -18,7 +18,8 @@ const adminRoute=require("./route/admin/adminRoute.js");
 const awarenessRoute=require("./route/admin/awarenessRoute.js");
 const importantLinks=require("./route/admin/implinksRoute.js");
 const sponsorRoute=require("./route/admin/sponsorRoute.js")
-const quizRoute=require("./route/admin/quizRoute.js")
+const quizRoute=require("./route/admin/quizRoute.js");
+const testYourSelfRoute=require("./route/admin/test_yourselfRoute.js")
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -56,6 +57,7 @@ app.use("/api/admin",awarenessRoute);
 app.use("/api/admin",importantLinks);
 app.use("/api/admin",sponsorRoute);
 app.use("/api/admin",quizRoute);
+app.use("/api/admin",testYourSelfRoute);
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

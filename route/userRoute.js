@@ -17,7 +17,11 @@ const {
   getSeachMutualpostUsingDvision,
   LikePosts,
   savePostInUser,
-  CommentPost
+  CommentPost,
+  getAllQuiz,
+  TestComplete,
+  UpdateTestAnswer,
+  getSingleQuiz,getSingleTest,getAllTest,UpdateAnswer,QuizComplete
 } = require("../controller/userController");
 const { getAll } = require("../controller/admin/implinks.Controller");
 const {
@@ -37,7 +41,6 @@ const {
   GetVideoByCategory,
   GetVideoById,
 } = require("../controller/admin/videoController");
-
 
 router.post("/register", UserRegister);
 router.post("/login", UserLogin);
@@ -91,5 +94,18 @@ router.post("/post/like/:id",isUser,LikePosts);
 router.post("/post/comment/:id",isUser,CommentPost);
 router.put("/savepost",isUser,savePostInUser);
 
+
+//user Quiz
+router.get("/quiz",isUser,getAllQuiz);
+router.get("/quiz/:id",isUser,getSingleQuiz);
+router.put("/quiz/answer/:id",isUser,UpdateAnswer);
+router.put("/quiz/complete/:id",isUser,QuizComplete);
+
+
+// user Test Your Self
+router.get("/test", isUser, getAllTest);
+router.get("/test/:id", isUser, getSingleTest);
+router.put("/test/answer/:id",isUser,UpdateTestAnswer);
+router.put("/test/complete/:id",isUser,TestComplete);
 
 module.exports = router;
