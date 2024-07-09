@@ -19,8 +19,8 @@ router.get("/test/:id", isAdmin, getSingleTest);
 router.put("/test/:id", isAdmin, UpdateTest);
 router.delete("/test/:id", isAdmin, deleteTest);
 
-//test your self questions
 
+//test your self questions
 router.post("/test/question/:testId", isAdmin, CreateTestQuestions);
 router.put("/test/question/:id", isAdmin, UpdateTstQuestion);
 router.delete("/test/question/:id", isAdmin, deleteTestQuestion);

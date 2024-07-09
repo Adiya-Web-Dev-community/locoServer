@@ -21,7 +21,7 @@ const {
   getAllQuiz,
   TestComplete,
   UpdateTestAnswer,
-  getSingleQuiz,getSingleTest,getAllTest,UpdateAnswer,QuizComplete
+  getSingleQuiz,getSingleTest,getAllTest,UpdateAnswer,QuizComplete,userComplteteQuiz,userComplteteTest
 } = require("../controller/userController");
 const { getAll } = require("../controller/admin/implinks.Controller");
 const {
@@ -94,18 +94,21 @@ router.post("/post/like/:id",isUser,LikePosts);
 router.post("/post/comment/:id",isUser,CommentPost);
 router.put("/savepost",isUser,savePostInUser);
 
-
 //user Quiz
 router.get("/quiz",isUser,getAllQuiz);
 router.get("/quiz/:id",isUser,getSingleQuiz);
 router.put("/quiz/answer/:id",isUser,UpdateAnswer);
 router.put("/quiz/complete/:id",isUser,QuizComplete);
 
-
 // user Test Your Self
 router.get("/test", isUser, getAllTest);
 router.get("/test/:id", isUser, getSingleTest);
 router.put("/test/answer/:id",isUser,UpdateTestAnswer);
 router.put("/test/complete/:id",isUser,TestComplete);
+
+//user usertest and quiz
+
+router.put("/userquiz/complete",isUser,userComplteteQuiz);
+router.put("/usertest/compltete",isUser,userComplteteTest);
 
 module.exports = router;

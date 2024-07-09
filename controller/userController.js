@@ -604,6 +604,52 @@ const TestComplete = async (req, res) => {
   }
  
 };
+const userComplteteQuiz = async (req, res) => {
+  const id=req.userId
+  try {
+    const response = await User.findById(id);
+    if (!response) {
+      return res.status(404).json({ success: false, message: 'user not found' });
+    }
+    response.quiz.push(req.body);
+   
+    await response.save();
+    res.status(200).json({
+      success: true,
+      message: 'Quiz data added to user successfully',
+      data: response
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+ 
+};
+const userComplteteTest = async (req, res) => {
+  const id=req.userId
+  try {
+    const response = await User.findById(id);
+    if (!response) {
+      return res.status(403).json({ success: false, message: 'user not found' });
+    }
+    response.test_yourself.push(req.body);
+   
+    await response.save();
+    res.status(200).json({
+      success: true,
+      message: 'Test data added to user successfully',
+      data: response
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+ 
+};
 module.exports = {
   getUser,
   UserRegister,
@@ -627,5 +673,7 @@ module.exports = {
   UpdateAnswer,
   QuizComplete,
   UpdateTestAnswer,
-  TestComplete
+  TestComplete,
+  userComplteteQuiz,
+  userComplteteTest
 };

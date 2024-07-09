@@ -104,6 +104,22 @@ const CreatQuiz = async (req, res) => {
       res.status(500).json({ success: false, message: error.message });
     }
   };
+  const getSingleQuizQuestions = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const response = await QuizQuestion.findById(id);
+      if (!response) {
+        return res
+          .status(403)
+          .json({ success: false, message: "Question Not Found" });
+      }
+
+      res.status(201).json(response);
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
   const UpdateQuizQuestion = async (req, res) => {
     try {
       const response = await QuizQuestion.findByIdAndUpdate(
@@ -149,5 +165,6 @@ const CreatQuiz = async (req, res) => {
     deleteQuiz,
     CreateQuizQuestions,
     UpdateQuizQuestion,
-    deleteQuizQuestion
+    deleteQuizQuestion,
+    getSingleQuizQuestions
   };

@@ -1,5 +1,41 @@
 const mongoose = require("mongoose");
 
+const userQuiz = new mongoose.Schema({
+  quizId: { type: mongoose.Schema.Types.ObjectId, ref: "quiz" },
+
+  score: {
+    type: Number,
+  },
+  rightanswers: {
+    type: Number,
+  },
+  wronganswers: {
+    type: Number,
+  },
+  isComplete: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const userTest = new mongoose.Schema({
+  testId: { type: mongoose.Schema.Types.ObjectId, ref: "test_yourself" },
+
+  score: {
+    type: Number,
+  },
+  rightanswers: {
+    type: Number,
+  },
+  wronganswers: {
+    type: Number,
+  },
+  isComplete: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 const userModel = new mongoose.Schema(
   {
     name: {
@@ -38,6 +74,8 @@ const userModel = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    quiz: [userQuiz],
+    test_yourself: [userTest],
   },
   {
     timestamps: true,

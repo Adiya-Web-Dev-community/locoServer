@@ -84,7 +84,7 @@ const GetVideoByCategory = async (req, res) => {
   try {
     const response = await Video.find({ category: category });
     if (!response?.length > 0) {
-      res.status(404).json({ success: false, message: "Video not found" });
+      res.status(403).json({ success: false, message: "Video not found" });
     } else {
       res.status(200).json({ success: true, data: response });
     }
@@ -98,7 +98,7 @@ const GetVideoById = async (req, res) => {
   try {
     const response = await Video.findById(id);
     if (!response) {
-      res.status(404).json({ success: false, message: "Video not found" });
+      res.status(403).json({ success: false, message: "Video not found" });
     } else {
       res.status(200).json( response);
     }
