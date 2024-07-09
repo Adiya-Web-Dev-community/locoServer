@@ -4,26 +4,32 @@ const videoModel = new mongoose.Schema(
   {
     title: {
       type: String,
-      require:true
+      require: true,
     },
-    slug:{
-      type:String,
-      require:true
+    slug: {
+      type: String,
+      require: true,
     },
-    category:{
-        type:String,
-        require:true
+    category: {
+      type: String,
+      require: true,
     },
-    url:{
-        type:String,
-        require:true
+    url: {
+      type: String,
+      require: true,
     },
-    tags:{
-      type:String
+    tags: [
+      {
+        type: String,
+      },
+    ],
+    description: {
+      type: String,
     },
-    description:{
-        type:String
-    }
+    thumnail: {
+      type: String,
+      require: true,
+    },
   },
   {
     timestamps: true,
