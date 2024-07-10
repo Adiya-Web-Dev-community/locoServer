@@ -12,4 +12,5 @@ const {dailyTaskCreate,
     router.get("/daily-task/:id",isAdmin,dailyTaskgetSingle);
     router.put("/daily-task/:id",isAdmin,UpdatedailyTask);
     router.delete("/daily-task/:id",isAdmin,DeletedailyTask);
+    
 module.exports = router;
