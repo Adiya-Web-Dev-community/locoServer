@@ -229,6 +229,7 @@ const getAllFormPost = async (req, res) => {
     });
   }
 };
+
 const LikePosts = async (req, res) => {
   try {
     const { id } = req.params;
