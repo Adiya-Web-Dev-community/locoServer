@@ -17,6 +17,7 @@ const {
   getSeachMutualpostUsingDvision,
   LikePosts,
   savePostInUser,
+  removePostFromUser,
   CommentPost,
   getAllQuiz,
   TestComplete,
@@ -93,6 +94,7 @@ router.get("/video/get-video-byid/:id", isUser, GetVideoById);
 router.post("/post/like/:id",isUser,LikePosts);
 router.post("/post/comment/:id",isUser,CommentPost);
 router.put("/savepost",isUser,savePostInUser);
+router.put("/rempost",isUser,removePostFromUser)
 
 //user Quiz
 router.get("/quiz",isUser,getAllQuiz);

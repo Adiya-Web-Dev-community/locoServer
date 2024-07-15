@@ -405,7 +405,7 @@ const savePostInUser = async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { savePosts: postId },
+      { $push: { savePosts: postId } },
       { new: true }
     ).populate("savePosts");
 
@@ -418,6 +418,36 @@ const savePostInUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Saved post updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const removePostFromUser = async (req, res) => {
+  const id = req.userId;
+  try {
+    const { postId } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $pull: { savePosts: postId } },
+      { new: true }
+    ).populate("savePosts");
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Post removed successfully",
       data: updatedUser,
     });
   } catch (error) {
@@ -676,5 +706,6 @@ module.exports = {
   UpdateTestAnswer,
   TestComplete,
   userComplteteQuiz,
-  userComplteteTest
+  userComplteteTest,
+  removePostFromUser
 };

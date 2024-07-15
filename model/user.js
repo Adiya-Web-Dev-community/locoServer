@@ -68,10 +68,10 @@ const userModel = new mongoose.Schema(
     otp: {
       type: Number,
     },
-    savePosts: {
+    savePosts: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "post",
-    },
+    }],
     role: {
       type: String,
       enum: ["user", "admin"],
