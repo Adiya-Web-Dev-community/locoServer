@@ -24,11 +24,10 @@ const DailyTaskRoute=require("./route/admin/dailytaskRoute.js");
 const quiztestRoute=require("./route/quiztestRoutes.js")
 const server = createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["Get", "Post", "Put", "Delete"],
-    credentials: true,
-  },
+  cors:[
+    'http://3.27.111.244',
+    'http://localhost:8080'
+ ]
 });
 // app.use(cors({
 //   origin: 'http://localhost:5173', 
