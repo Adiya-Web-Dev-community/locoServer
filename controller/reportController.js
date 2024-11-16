@@ -42,17 +42,12 @@ const getReports = async (req, res) => {
   try {
     const { status } = req.query;
     const filter = status ? { status } : {};
-    const reports = await Report.find(filter)
-      .populate("reportedBy")
-      .populate("reportedUser")
-      .populate("reportedPost");
+    const reports = await Report.find(filter).populate("reportedBy").populate("reportedUser").populate("reportedPost");
 
     return res.status(200).json(reports);
   } catch (error) {
     console.log("get all", error);
-    return res
-      .status(500)
-      .json({ message: "Error fetching reports", error: error.message });
+    return res.status(500).json({ message: "Error fetching reports", error: error.message });
   }
 };
 

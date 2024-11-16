@@ -22,7 +22,8 @@ const {
   getAllQuiz,
   TestComplete,
   UpdateTestAnswer,
-  getSingleQuiz,getSingleTest,getAllTest,UpdateAnswer,QuizComplete,userComplteteQuiz,userComplteteTest
+  getSingleQuiz, getSingleTest, getAllTest, UpdateAnswer, QuizComplete, userComplteteQuiz, userComplteteTest,
+  deleteUserAccount
 } = require("../controller/userController");
 const { getAll } = require("../controller/admin/implinks.Controller");
 const {
@@ -44,6 +45,7 @@ const {
 } = require("../controller/admin/videoController");
 
 router.post("/register", UserRegister);
+router.delete("/delete-user/:id", isUser, deleteUserAccount);
 router.post("/login", UserLogin);
 router.get("/get_myself", usermiddleare, getUser);
 router.post("/post", usermiddleare, userPost);
@@ -91,26 +93,26 @@ router.get("/video/get-video-bycategory/:category", isUser, GetVideoByCategory);
 router.get("/video/get-video-byid/:id", isUser, GetVideoById);
 
 //like and comment and save posts
-router.post("/post/like/:id",isUser,LikePosts);
-router.post("/post/comment/:id",isUser,CommentPost);
-router.put("/savepost",isUser,savePostInUser);
-router.put("/rempost",isUser,removePostFromUser)
+router.post("/post/like/:id", isUser, LikePosts);
+router.post("/post/comment/:id", isUser, CommentPost);
+router.put("/savepost", isUser, savePostInUser);
+router.put("/rempost", isUser, removePostFromUser)
 
 //user Quiz
-router.get("/quiz",isUser,getAllQuiz);
-router.get("/quiz/:id",isUser,getSingleQuiz);
-router.put("/quiz/answer/:id",isUser,UpdateAnswer);
-router.put("/quiz/complete/:id",isUser,QuizComplete);
+router.get("/quiz", isUser, getAllQuiz);
+router.get("/quiz/:id", isUser, getSingleQuiz);
+router.put("/quiz/answer/:id", isUser, UpdateAnswer);
+router.put("/quiz/complete/:id", isUser, QuizComplete);
 
 // user Test Your Self
 router.get("/test", isUser, getAllTest);
 router.get("/test/:id", isUser, getSingleTest);
-router.put("/test/answer/:id",isUser,UpdateTestAnswer);
-router.put("/test/complete/:id",isUser,TestComplete);
+router.put("/test/answer/:id", isUser, UpdateTestAnswer);
+router.put("/test/complete/:id", isUser, TestComplete);
 
 //user usertest and quiz
 
-router.put("/userquiz/complete",isUser,userComplteteQuiz);
-router.put("/usertest/compltete",isUser,userComplteteTest);
+router.put("/userquiz/complete", isUser, userComplteteQuiz);
+router.put("/usertest/compltete", isUser, userComplteteTest);
 
 module.exports = router;
