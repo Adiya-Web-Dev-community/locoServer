@@ -23,12 +23,13 @@ exports.getAppSetting = async (req, res) => {
     }
 }
 exports.addSetting = async (req, res) => {
-    const id = req.params.id
+    const id = req.params?.id
 
 
     const versionCode = req.body.versionCode
+    const appName = req.body?.appName
     const versionName = req.body.versionName
-    const comment = req.body.comment
+    const comment = req.body?.comment
     const url = req.body.url
 
 
@@ -39,13 +40,13 @@ exports.addSetting = async (req, res) => {
             if (!checkSetting) {
                 return res.status(404).json({ success: false, message: "App Setting not found. Please add one" });
             }
-            const result = await Setting.findByIdAndUpdate(id, { versionCode, versionName, comment, url }, { new: true })
+            const result = await Setting.findByIdAndUpdate(id, { versionCode, versionName, comment, url, appName }, { new: true })
             if (result) {
                 return res.status(200).json({ success: true, data: result, message: "App Setting updated successfully." });
             }
             return res.status(400).json({ success: false, message: "Failed to update app setting!" });
         } else {
-            const result = await Setting.create({ versionCode, versionName, comment, url })
+            const result = await Setting.create({ versionCode, versionName, comment, url, appName })
             if (result) {
                 return res.status(201).json({ success: true, data: result, message: "App Setting updated successfully." });
             }

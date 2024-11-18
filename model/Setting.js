@@ -13,6 +13,11 @@ const SettingSchema = new mongoose.Schema({
     },
     url: {
         type: String
+    },
+    appName: {
+        type: String,
+        required: true,
+        unique: true
     }
 }, { timestamps: true })
 

@@ -98,32 +98,3 @@ io.on("connection", (socket) => {
     io.emit("online-users-updated", onlineUsers);
   });
 });
-
-// let onlineUser = [];
-
-// io.on("connection", (socket) => {
-//   console.log("connection socket Established", socket.id);
-//   socket.on("NewUser", (userId) => {
-//     !onlineUser.some((user) => user.userId === userId) &&
-//       onlineUser.push({
-//         userId,
-//         socketId: socket.id,
-//       });
-//     io.emit("getonlineUser", onlineUser);
-//   });
-//   socket.on("sendMessage", (msg) => {
-//     const user = onlineUser?.find((use) => use?.userId === msg?.recipientId);
-//     if (user) {
-//       io.emit("getMessage", msg);
-//       io.emit("getNotification", {
-//         senderId: msg?.senderId,
-//         isRead: false,
-//         date: new Date(),
-//       });
-//     }
-//   });
-//   socket.on("disconnect", () => {
-//     onlineUser = onlineUser.filter((user) => user?.userId !== socket.id);
-//     io.emit("getonlineUser", onlineUser);
-//   });
-// })
