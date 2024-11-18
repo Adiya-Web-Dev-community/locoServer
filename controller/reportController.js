@@ -17,6 +17,8 @@ const reportPost = async (req, res) => {
 
     await newReport.save();
 
+    console.log("reportedUser: ", reportedUser);
+
     const user = await User.findById(reportedUser);
 
     console.log(user);

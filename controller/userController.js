@@ -204,17 +204,10 @@ const userMutualPost = async (req, res) => {
   });
 
   await newMutual.save();
-  res.status(201).json({
-    success: true,
-    message: "post created successfully",
-    data: newMutual,
-  });
+  res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
   try {
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
@@ -223,20 +216,11 @@ const getAllFormPost = async (req, res) => {
   try {
     const response = await Mutual.find();
     if (!response.length > 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
-    res.status(200).json({
-      success: true,
-      message: "get post Successfully",
-      data: response,
-    });
+    res.status(200).json({ success: true, message: "get post Successfully", data: response, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
@@ -244,28 +228,15 @@ const LikePosts = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const post = await Post.findByIdAndUpdate(
-      id,
-      { $inc: { like: 1 } },
-      { new: true }
-    );
+    const post = await Post.findByIdAndUpdate(id, { $inc: { like: 1 } }, { new: true });
 
     if (!post) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Post not found" });
+      return res.status(404).json({ success: false, message: "Post not found" });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Post liked successfully",
-      data: post,
-    });
+    res.status(200).json({ success: true, message: "Post liked successfully", data: post, });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -277,25 +248,16 @@ const CommentPost = async (req, res) => {
     const post = await Post.findById(id);
 
     if (!post) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Post not found" });
+      return res.status(404).json({ success: false, message: "Post not found" });
     }
 
     const newComment = { comment: comment, comment_user: userId };
     post.comments.push(newComment);
     await post.save();
 
-    res.status(200).json({
-      success: true,
-      message: "Comment added successfully",
-      data: post,
-    });
+    res.status(200).json({ success: true, message: "Comment added successfully", data: post, });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -368,32 +330,18 @@ const getSeachMutualpostUsingwantedLobby = async (req, res) => {
   const { search } = req.query;
   try {
     if (!search || search.trim() === "") {
-      return res.send({
-        success: false,
-        message: "Search query cannot be empty",
-      });
+      return res.send({ success: false, message: "Search query cannot be empty", });
     }
     const escapedSearch = escapeRegex(search);
     const searchRegex = new RegExp(`^${escapedSearch}`, "i");
-    const response = await Mutual.find({
-      $or: [{ currentlobby: searchRegex }],
-    });
+    const response = await Mutual.find({ $or: [{ currentlobby: searchRegex }], });
 
     if (!response.length > 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
-    res.status(200).json({
-      success: true,
-      message: "get post Successfully",
-      data: response,
-    });
+    res.status(200).json({ success: true, message: "get post Successfully", data: response, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
@@ -403,24 +351,14 @@ const UpdateUserProfile = async (req, res) => {
   const id = req.userId;
   const data = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { $set: data },
-      { new: true }
-    ).select("-password");
-
+    const updatedUser = await User.findByIdAndUpdate(id, { $set: data }, { new: true }).select("-password");
     if (!updatedUser) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    res
-      .status(202)
-      .send({ success: true, message: "user Updated", data: updatedUser });
+    res.status(202).send({ success: true, message: "user Updated", data: updatedUser });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
