@@ -8,35 +8,27 @@ const TestYourSelf = require("../model/test_yourself/text_yourself");
 const TestYourSelfQuestion = require("../model/test_yourself/testYourSelfQuestionModel");
 const Quiz = require("../model/quiz/quizModel");
 const QuizQuestion = require("../model/quiz/quizquestions");
+
+
 const UserRegister = async (req, res) => {
-  const { image, name, email, mobile, password, designation, division } =
+  const { image, name, email, mobile, password } =
     req.body;
   try {
     const user = await User.findOne({ email: email });
     if (user) {
-      return res.status(409).json({
-        success: false,
-        message: "User already exists",
-      });
+      return res.status(409).json({ success: false, message: "User already exists", });
     }
+
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
-      image: image,
-      name: name,
-      email: email,
-      mobile: mobile,
-      password: hashPassword,
+      image: image, name: name, email: email, mobile: mobile, password: hashPassword,
       // designation: designation,
       // division: division,
     });
 
     await newUser.save();
 
-    res.status(201).json({
-      success: true,
-      message: "User created successfully",
-      data: newUser,
-    });
+    res.status(201).json({ success: true, message: "User created successfully", data: newUser, });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -44,6 +36,8 @@ const UserRegister = async (req, res) => {
     });
   }
 };
+
+
 const UserLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -81,6 +75,8 @@ const UserLogin = async (req, res) => {
     });
   }
 };
+
+
 const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.userId)
@@ -100,6 +96,8 @@ const getUser = async (req, res) => {
     });
   }
 };
+
+
 const userPost = async (req, res) => {
   const { thumnail, content, mediatype } = req.body;
 
@@ -124,6 +122,8 @@ const userPost = async (req, res) => {
     });
   }
 };
+
+
 const getAllPost = async (req, res) => {
   try {
     const response = await Post.find()
@@ -153,6 +153,9 @@ const getAllPost = async (req, res) => {
     });
   }
 };
+
+
+
 const getAllPostByUserId = async (req, res) => {
   const userId = req.userId;
   try {
@@ -175,6 +178,8 @@ const getAllPostByUserId = async (req, res) => {
     });
   }
 };
+
+
 const userMutualPost = async (req, res) => {
   const {
     name,
@@ -212,6 +217,8 @@ const userMutualPost = async (req, res) => {
     });
   }
 };
+
+
 const getAllFormPost = async (req, res) => {
   try {
     const response = await Mutual.find();
@@ -291,6 +298,9 @@ const CommentPost = async (req, res) => {
     });
   }
 };
+
+
+
 const getAllFormPostByUserId = async (req, res) => {
   const userId = req.userId;
   try {
@@ -313,9 +323,13 @@ const getAllFormPostByUserId = async (req, res) => {
     });
   }
 };
+
+
 const escapeRegex = (string) => {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
+
+
 const getSeachMutualpostUsingDvision = async (req, res) => {
   const { search } = req.query;
   try {
@@ -348,6 +362,8 @@ const getSeachMutualpostUsingDvision = async (req, res) => {
     });
   }
 };
+
+
 const getSeachMutualpostUsingwantedLobby = async (req, res) => {
   const { search } = req.query;
   try {
@@ -380,6 +396,9 @@ const getSeachMutualpostUsingwantedLobby = async (req, res) => {
     });
   }
 };
+
+
+
 const UpdateUserProfile = async (req, res) => {
   const id = req.userId;
   const data = req.body;
@@ -404,6 +423,8 @@ const UpdateUserProfile = async (req, res) => {
     });
   }
 };
+
+
 const savePostInUser = async (req, res) => {
   const id = req.userId;
 
@@ -464,6 +485,8 @@ const removePostFromUser = async (req, res) => {
     });
   }
 };
+
+
 const getAllQuiz = async (req, res) => {
   try {
     const response = await Quiz.find().populate("questions");
@@ -477,6 +500,8 @@ const getAllQuiz = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 const getSingleQuiz = async (req, res) => {
   const { id } = req.params;
   try {
@@ -491,6 +516,8 @@ const getSingleQuiz = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 const getAllTest = async (req, res) => {
   try {
     const response = await TestYourSelf.find().populate("questions");
@@ -504,6 +531,8 @@ const getAllTest = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 const getSingleTest = async (req, res) => {
   const { id } = req.params;
   try {
@@ -518,6 +547,9 @@ const getSingleTest = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
 const UpdateAnswer = async (req, res) => {
   const { id } = req.params;
   const { answer } = req.body;
@@ -547,6 +579,9 @@ const UpdateAnswer = async (req, res) => {
     });
   }
 };
+
+
+
 const QuizComplete = async (req, res) => {
   const { id } = req.params;
   try {
@@ -585,6 +620,8 @@ const QuizComplete = async (req, res) => {
     });
   }
 };
+
+
 const UpdateTestAnswer = async (req, res) => {
   const { id } = req.params;
   const { answer } = req.body;
@@ -614,6 +651,8 @@ const UpdateTestAnswer = async (req, res) => {
     });
   }
 };
+
+
 const TestComplete = async (req, res) => {
   const { id } = req.params;
   try {
@@ -652,6 +691,8 @@ const TestComplete = async (req, res) => {
     });
   }
 };
+
+
 const userComplteteQuiz = async (req, res) => {
   const id = req.userId;
   try {
@@ -676,6 +717,8 @@ const userComplteteQuiz = async (req, res) => {
     });
   }
 };
+
+
 const userComplteteTest = async (req, res) => {
   const id = req.userId;
   try {
@@ -700,6 +743,38 @@ const userComplteteTest = async (req, res) => {
     });
   }
 };
+
+const deleteUserAccount = async (req, res) => {
+  const id = req.params.id
+  try {
+    const checkUser = await User.findById(id)
+    if (!checkUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    const result = await User.findByIdAndDelete(id)
+    if (result) {
+      return res.status(200).json({
+        success: true,
+        message: "Test data added to user successfully",
+        data: response,
+      })
+    }
+    return res.status(400).json({
+      success: false,
+      message: "Failed to delte user",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
 module.exports = {
   getUser,
   UserRegister,
@@ -727,4 +802,5 @@ module.exports = {
   userComplteteQuiz,
   userComplteteTest,
   removePostFromUser,
+  deleteUserAccount,
 };

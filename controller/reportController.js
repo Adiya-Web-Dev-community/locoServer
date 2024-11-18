@@ -27,14 +27,10 @@ const reportPost = async (req, res) => {
 
     sendReportMail(userEmail, subject, message);
 
-    return res
-      .status(201)
-      .json({ message: "Report submitted successfully", data: newReport });
+    return res.status(201).json({ message: "Report submitted successfully", data: newReport });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ message: "Error reporting post", error: error.message });
+    return res.status(500).json({ message: "Error reporting post", error: error.message });
   }
 };
 
@@ -42,17 +38,12 @@ const getReports = async (req, res) => {
   try {
     const { status } = req.query;
     const filter = status ? { status } : {};
-    const reports = await Report.find(filter)
-      .populate("reportedBy")
-      .populate("reportedUser")
-      .populate("reportedPost");
+    const reports = await Report.find(filter).populate("reportedBy").populate("reportedUser").populate("reportedPost");
 
     return res.status(200).json(reports);
   } catch (error) {
     console.log("get all", error);
-    return res
-      .status(500)
-      .json({ message: "Error fetching reports", error: error.message });
+    return res.status(500).json({ message: "Error fetching reports", error: error.message });
   }
 };
 
@@ -65,11 +56,7 @@ const updateReportStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    const report = await Report.findByIdAndUpdate(
-      reportId,
-      { status },
-      { new: true }
-    );
+    const report = await Report.findByIdAndUpdate(reportId, { status }, { new: true });
 
     if (!report) {
       return res.status(404).json({ message: "Report not found" });
@@ -84,8 +71,7 @@ const updateReportStatus = async (req, res) => {
 
     if (status === "Reviewed") {
       subject = "Your Post is Under Review";
-      message =
-        "Your post is currently being reviewed due to reports. You may receive further updates if action is required.";
+      message = "Your post is currently being reviewed due to reports. You may receive further updates if action is required.";
     } else if (status === "Resolved") {
       subject = "Your Post has been Resolved";
       message =
@@ -95,13 +81,9 @@ const updateReportStatus = async (req, res) => {
     const userEmail = user.email;
     sendReportMail(userEmail, subject, message);
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Report status updated", report });
+    return res.status(200).json({ success: true, message: "Report status updated", report });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error updating report status", error });
+    return res.status(500).json({ message: "Error updating report status", error });
   }
 };
 
