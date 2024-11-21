@@ -79,21 +79,13 @@ const UserLogin = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.userId)
-      .select("-password")
-      .select("-otp")
-      .populate("savePosts");
+    const user = await User.findById(req.userId).select("-password").select("-otp").populate("savePosts");
     if (!user) {
-      return res
-        .status(403)
-        .json({ success: false, message: "user Not Found" });
+      return res.status(403).json({ success: false, message: "user Not Found" });
     }
     return res.status(200).json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return res.status(500).json({ success: false, message: error.message, });
   }
 };
 

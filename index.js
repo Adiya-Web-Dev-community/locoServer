@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 mongoose.set("strictQuery", false);
 require("dotenv").config();
 const { Server } = require("socket.io");
@@ -25,6 +23,7 @@ const quiztestRoute = require("./route/quiztestRoutes.js");
 const reportRoute = require("./route/reportRoute.js");
 const settingRouter = require("./route/admin/setting.js");
 const server = createServer(app);
+// const { app, server } = require('./soket/socket.js')
 const io = new Server(server, {
   cors: ["http://3.27.111.244", "http://localhost:8080"],
 });
@@ -35,6 +34,8 @@ const io = new Server(server, {
 //   allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
 // }));
 
+app.use(cors());
+app.use(bodyParser.json());
 app.get("/", (req, res) => {
   res.send("WebSocket server is running");
 });
