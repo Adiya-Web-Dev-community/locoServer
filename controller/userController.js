@@ -181,33 +181,15 @@ const getAllPostByUserId = async (req, res) => {
 
 
 const userMutualPost = async (req, res) => {
-  const {
-    name,
-    email,
-    mobile,
-    currentdivision,
-    designation,
-    currentlobby,
-    wantedlobby,
-    wanteddivision,
-  } = req.body;
-  const newMutual = new Mutual({
-    userId: req.userId,
-    name: name,
-    email: email,
-    mobile: mobile,
-    currentdivision: currentdivision,
-    designation: designation,
-    currentlobby: currentlobby,
-    wantedlobby: wantedlobby,
-    wanteddivision: wanteddivision,
-  });
+  const { name, email, mobile, currentdivision, designation, currentlobby, wantedlobby, wanteddivision, } = req.body;
 
-  await newMutual.save();
-  res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
   try {
+    const newMutual = new Mutual({ userId: req.userId, name: name, email: email, mobile: mobile, currentdivision: currentdivision, designation: designation, currentlobby: currentlobby, wantedlobby: wantedlobby, wanteddivision: wanteddivision, });
+    await newMutual.save();
+
+    return res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message, });
+    return res.status(500).json({ success: false, message: err.message, });
   }
 };
 

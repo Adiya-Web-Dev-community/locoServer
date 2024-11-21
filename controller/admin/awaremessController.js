@@ -16,50 +16,36 @@ const createCategory = async (req, res) => {
 };
 const UpdateCategory = async (req, res) => {
   try {
-    const response = await AwarenessCategory.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const response = await AwarenessCategory.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true, });
     if (response) {
-   return   res.status(200).json({
-        success: true,
-        data: response,
-        message: "Awareness Category Updated",
-      });
+      return res.status(200).json({ success: true, data: response, message: "Awareness Category Updated", });
     } else {
-     return res.status(404).json({ success: false, message: "Category not found" });
+      return res.status(404).json({ success: false, message: "Category not found" });
     }
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 const getAllCategory = async (req, res) => {
+
   try {
     const response = await AwarenessCategory.find();
+
     if (!response?.length > 0) {
-      return res
-        .status(200)
-        .json({ success: false, mesaage: "category Not Found" });
+      return res.status(404).json({ success: false, mesaage: "category Not Found" });
     }
-    res.status(200).json(response);
+    return res.status(200).json({ success: true, mesaage: "category", data: response });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 const deleteCategory = async (req, res) => {
   try {
     const response = await AwarenessCategory.findByIdAndDelete(req.params.id);
     if (response) {
-      res
-        .status(200)
-        .json({ success: true, message: "Awareness Category deleted" });
-    } else {
-      res.status(404).json({ success: false, message: "Category not found" });
+      return res.status(200).json({ success: true, message: "Awareness Category deleted" });
     }
+    return res.status(404).json({ success: false, message: "Category not found" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -68,13 +54,9 @@ const CreateAwareNess = async (req, res) => {
   try {
     const response = await Awareness.create(req.body);
     if (response) {
-      res
-        .status(201)
-        .json({ success: true, data: response, message: "Awareness Uploaded" });
+      res.status(201).json({ success: true, data: response, message: "Awareness Uploaded" });
     } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Awareness not Uploaded" });
+      res.status(400).json({ success: false, message: "Awareness not Uploaded" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -84,9 +66,7 @@ const getAllAwareness = async (req, res) => {
   try {
     const response = await Awareness.find();
     if (!response?.length > 0) {
-      return res
-        .status(403)
-        .json({ success: false, message: "No Awareness Found" });
+      return res.status(403).json({ success: false, message: "No Awareness Found" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -94,13 +74,13 @@ const getAllAwareness = async (req, res) => {
   }
 };
 const getAwarenessById = async (req, res) => {
+  // console.log("calling................................................................");
+  
   const { id } = req.params;
   try {
     const response = await Awareness.findById(id);
     if (!response) {
-      return res
-        .status(403)
-        .json({ success: false, message: "No Awareness Found" });
+      return res.status(403).json({ success: false, message: "No Awareness Found" });
     }
     res.status(200).json(response);
   } catch (error) {
