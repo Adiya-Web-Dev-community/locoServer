@@ -22,6 +22,7 @@ const DailyTaskRoute = require("./route/admin/dailytaskRoute.js");
 const quiztestRoute = require("./route/quiztestRoutes.js");
 const reportRoute = require("./route/reportRoute.js");
 const settingRouter = require("./route/admin/setting.js");
+const notifyRouter = require("./route/notification.js");
 const server = createServer(app);
 // const { app, server } = require('./soket/socket.js')
 const io = new Server(server, {
@@ -62,6 +63,8 @@ app.use("/api/admin", testYourSelfRoute);
 app.use("/api/admin", DailyTaskRoute);
 app.use("/api/admin", reportRoute);
 app.use("/api/admin", settingRouter);
+app.use('/api/notification', notifyRouter)
+
 
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);

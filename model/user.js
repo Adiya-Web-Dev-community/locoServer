@@ -17,7 +17,10 @@ const userQuiz = new mongoose.Schema({
     default: false,
   },
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1b63191 (notification and account delete)
 const userTask = new mongoose.Schema({
   taskId: { type: mongoose.Schema.Types.ObjectId, ref: "dailytask" },
   isComplete: { type: Boolean }
@@ -83,6 +86,10 @@ const userModel = new mongoose.Schema(
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    fcmToken: {
+      type: String,
+      // unique: true,
     },
     quiz: [userQuiz],
     test_yourself: [userTest],

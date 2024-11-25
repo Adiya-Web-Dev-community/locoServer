@@ -21,7 +21,7 @@ const reportPost = async (req, res) => {
 
     const user = await User.findById(reportedUser);
 
-    console.log(user);
+    // console.log(user);
 
     const userEmail = user.email;
     const subject = "Your Post Has Been Reported";

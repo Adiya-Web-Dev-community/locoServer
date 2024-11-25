@@ -1,6 +1,8 @@
 const BlogCategoryModel = require("../../model/blogs/blogcategoryModel");
 const UserBlogs = require("../../model/blogs/blogcat");
 const Blog = require("../../model/blogs/blogModules");
+const { sendMessage } = require("../../services/notification");
+const { sendNotifcationToAllUsers } = require("../notification");
 
 const createMainCategory = async (req, res) => {
   try {
@@ -482,54 +484,38 @@ const createBlogInnerCategory = async (req, res) => {
 };
 
 const CreateBlogs = async (req, res) => {
+  const {
+    maincategory,
+    subcategory,
+    subsubcategory,
+    innercategory,
+    title,
+    slug,
+    thumnail,
+    content,
+  } = req.body;
+
   try {
-    const {
-      maincategory,
-      subcategory,
-      subsubcategory,
-      innercategory,
-      title,
-      slug,
-      thumnail,
-      content,
-    } = req.body;
-    console.log("thumbnail>>", thumnail)
-    const userBlog = await UserBlogs.findOneAndUpdate(
-      { name: maincategory },
-      { $setOnInsert: { name: maincategory } },
-      { upsert: true, new: true }
-    );
+    // console.log("thumbnail>>", thumnail)
+    const userBlog = await UserBlogs.findOneAndUpdate({ name: maincategory }, { $setOnInsert: { name: maincategory } }, { upsert: true, new: true });
+
     const findOrCreateCategory = (categories, categoryName) => {
       let categoryIndex = categories.findIndex(
         (cat) => cat.name === categoryName
       );
+
       if (categoryIndex === -1) {
-        categories.push({
-          name: categoryName,
-        });
+        categories.push({ name: categoryName, });
         categoryIndex = categories.length - 1;
       }
       return categoryIndex;
     };
 
-    let subCatIndex = subcategory
-      ? findOrCreateCategory(userBlog.subCategories, subcategory)
-      : null;
+    let subCatIndex = subcategory ? findOrCreateCategory(userBlog.subCategories, subcategory) : null;
 
-    let subSubCatIndex = subsubcategory
-      ? findOrCreateCategory(
-        userBlog.subCategories[subCatIndex].subSubCategories,
-        subsubcategory
-      )
-      : null;
+    let subSubCatIndex = subsubcategory ? findOrCreateCategory(userBlog.subCategories[subCatIndex].subSubCategories, subsubcategory) : null;
 
-    let innerCatIndex = innercategory
-      ? findOrCreateCategory(
-        userBlog.subCategories[subCatIndex].subSubCategories[subSubCatIndex]
-          .innerCategories,
-        innercategory
-      )
-      : null;
+    let innerCatIndex = innercategory ? findOrCreateCategory(userBlog.subCategories[subCatIndex].subSubCategories[subSubCatIndex].innerCategories, innercategory) : null;
 
     const blog = await Blog.create({ title, slug, thumnail, content });
 
@@ -548,9 +534,13 @@ const CreateBlogs = async (req, res) => {
     }
 
     await userBlog.save();
+
+    await sendNotifcationToAllUsers(title, content, "blog")
+    // sendMessage(sender, reciver, title, content, "blog")
+
     res.status(201).json({ success: true, data: userBlog, message: "Blog Created" });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 

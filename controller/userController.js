@@ -30,29 +30,27 @@ const UserRegister = async (req, res) => {
 
     res.status(201).json({ success: true, message: "User created successfully", data: newUser, });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
 
 const UserLogin = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, fcmToken } = req.body;
+
+
+  console.log("================================================= login ===============================================");
+  console.log("req.body: ", req.body);
+
   try {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid Email credentials" });
+      return res.status(401).json({ success: false, message: "Invalid Email credentials" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid Password credentials" });
+      return res.status(401).json({ success: false, message: "Invalid Password credentials" });
     }
     const token = jwt.sign(
       { _id: user._id, email: user?.email, role: user?.role },
@@ -61,18 +59,14 @@ const UserLogin = async (req, res) => {
         expiresIn: process.env.JWT_EXPIRE_TIME,
       }
     );
-    return res
-      .cookie("authorization", token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 240 * 60 * 60 * 1000),
-      })
-      .status(200)
-      .json({ success: true, message: "Login successful", token: token });
+    if (fcmToken) {
+      user.fcmToken = fcmToken;
+      await user.save();
+    }
+    return res.cookie("authorization", token, { httpOnly: true, expires: new Date(Date.now() + 240 * 60 * 60 * 1000), }).status(200).json({ success: true, message: "Login successful local", token: token, body: req.body });
+    // return res.status(200).json({ success: true, message: "tested success" });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -85,9 +79,31 @@ const getUser = async (req, res) => {
     }
     return res.status(200).json({ success: true, data: user });
   } catch (error) {
+<<<<<<< HEAD
     return res.status(500).json({ success: false, message: error.message, });
+=======
+    res.status(500).json({ success: false, message: error.message, });
+>>>>>>> 1b63191 (notification and account delete)
   }
 };
+
+const deleteUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const checkUser = await User.findById(id)
+    if (!checkUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    const result = await User.findByIdAndDelete(id);
+    if (result) {
+      return res.status(200).json({ success: true, message: "User deleted successfully" });
+    }
+    return res.status(404).json({ success: false, message: "User not found" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message, });
+  }
+}
 
 
 const userPost = async (req, res) => {
@@ -102,47 +118,23 @@ const userPost = async (req, res) => {
     });
 
     await newPost.save();
-    res.status(201).json({
-      success: true,
-      message: "post created successfully",
-      data: newPost,
-    });
+    res.status(201).json({ success: true, message: "post created successfully", data: newPost, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
 
 const getAllPost = async (req, res) => {
   try {
-    const response = await Post.find()
-      .populate({
-        path: "user",
-        select: "-password -otp",
-      })
-      .populate({
-        path: "comments.comment_user",
-        select: "-password -otp",
-      });
+    const response = await Post.find().populate({ path: "user", select: "-password -otp", }).populate({ path: "comments.comment_user", select: "-password -otp", });
 
     if (!response.length > 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
-    res.status(200).json({
-      success: true,
-      message: "get post Successfully",
-      data: response,
-    });
+    res.status(200).json({ success: true, message: "get post Successfully", data: response, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
@@ -154,25 +146,17 @@ const getAllPostByUserId = async (req, res) => {
     const response = await Post.find({ user: userId });
     console.log("lengthof datah", response?.length);
     if (!response.length > 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
-    res.status(200).json({
-      success: true,
-      message: "get post Successfully",
-      data: response,
-    });
+    res.status(200).json({ success: true, message: "get post Successfully", data: response, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
 
 const userMutualPost = async (req, res) => {
+<<<<<<< HEAD
   const { name, email, mobile, currentdivision, designation, currentlobby, wantedlobby, wanteddivision, } = req.body;
 
   try {
@@ -182,6 +166,35 @@ const userMutualPost = async (req, res) => {
     return res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message, });
+=======
+  const {
+    name,
+    email,
+    mobile,
+    currentdivision,
+    designation,
+    currentlobby,
+    wantedlobby,
+    wanteddivision,
+  } = req.body;
+  try {
+    const newMutual = new Mutual({
+      userId: req.userId,
+      name: name,
+      email: email,
+      mobile: mobile,
+      currentdivision: currentdivision,
+      designation: designation,
+      currentlobby: currentlobby,
+      wantedlobby: wantedlobby,
+      wanteddivision: wanteddivision,
+    });
+
+    await newMutual.save();
+    res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message, });
+>>>>>>> 1b63191 (notification and account delete)
   }
 };
 
@@ -243,20 +256,11 @@ const getAllFormPostByUserId = async (req, res) => {
     const response = await Mutual.find({ userId: userId });
 
     if (!response.length > 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
-    res.status(200).json({
-      success: true,
-      message: "get post Successfully",
-      data: response,
-    });
+    res.status(200).json({ success: true, message: "get post Successfully", data: response, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
@@ -657,33 +661,25 @@ const userComplteteTest = async (req, res) => {
 };
 
 const deleteUserAccount = async (req, res) => {
+  // console.log("req.params: ", req.params);
+
   const id = req.params.id
   try {
     const checkUser = await User.findById(id)
+    // console.log("user: ", checkUser);
     if (!checkUser) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      return res.status(404).json({ success: false, message: "User not found", });
     }
+
+
     const result = await User.findByIdAndDelete(id)
     if (result) {
-      return res.status(200).json({
-        success: true,
-        message: "Test data added to user successfully",
-        data: response,
-      })
+      return res.status(200).json({ success: true, message: "Test data added to user successfully", data: response, })
     }
-    return res.status(400).json({
-      success: false,
-      message: "Failed to delte user",
-    });
+    return res.status(400).json({ success: false, message: "Failed to delte user", });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 }
 
