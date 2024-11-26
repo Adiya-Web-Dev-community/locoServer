@@ -4,7 +4,7 @@ const { getReports, updateReportStatus, reportPost, } = require("../controller/r
 
 const { isUser, isAdmin } = require("../middleware/rolebaseuserValidate");
 
-router.get("/report", /* isAdmin, */ getReports);
+router.get("/report", isAdmin, getReports);
 router.put("/report/:id", isAdmin, updateReportStatus);
 router.post("/report", isUser, reportPost);
 

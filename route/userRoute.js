@@ -2,47 +2,12 @@ const express = require("express");
 const { isUser } = require("../middleware/rolebaseuserValidate");
 const router = express.Router();
 const usermiddleare = require("../middleware/accoundvalidate");
-const {
-  UserRegister,
-  UserLogin,
-  UpdateUserProfile,
-  getUser,
-  userPost,
-  getAllPost,
-  getAllPostByUserId,
-  userMutualPost,
-  getAllFormPost,
-  getAllFormPostByUserId,
-  getSeachMutualpostUsingwantedLobby,
-  getSeachMutualpostUsingDvision,
-  LikePosts,
-  savePostInUser,
-  removePostFromUser,
-  CommentPost,
-  getAllQuiz,
-  TestComplete,
-  UpdateTestAnswer,
-  getSingleQuiz, getSingleTest, getAllTest, UpdateAnswer, QuizComplete, userComplteteQuiz, userComplteteTest,
-  deleteUserAccount
-} = require("../controller/userController");
+const { UserRegister, UserLogin, UpdateUserProfile, getUser, userPost, getAllPost, getAllPostByUserId, userMutualPost, getAllFormPost, getAllFormPostByUserId, getSeachMutualpostUsingwantedLobby, getSeachMutualpostUsingDvision, LikePosts, savePostInUser, removePostFromUser, CommentPost, getAllQuiz, TestComplete, UpdateTestAnswer, getSingleQuiz, getSingleTest, getAllTest, UpdateAnswer, QuizComplete, userComplteteQuiz, userComplteteTest, deleteUserAccount } = require("../controller/userController");
 const { getAll } = require("../controller/admin/implinks.Controller");
-const {
-  getAllCategory,
-  getAwarenessById,
-  getAwarenessByCategory,
-} = require("../controller/admin/awaremessController");
+const { getAllCategory, getAwarenessById, getAwarenessByCategory, } = require("../controller/admin/awaremessController");
 const { GetUserBlog } = require("../controller/admin/blogs");
-const {
-  getAllcompany,
-  getSingleProduct,
-  getSinglecompany,
-  getAllProsucts,
-} = require("../controller/admin/sponsorController");
-const {
-  getAllVideoCategory,
-  GetVideoByCategory,
-  GetVideoById,
-} = require("../controller/admin/videoController");
+const { getAllcompany, getSingleProduct, getSinglecompany, getAllProsucts, } = require("../controller/admin/sponsorController");
+const { getAllVideoCategory, GetVideoByCategory, GetVideoById, } = require("../controller/admin/videoController");
 
 router.post("/register", UserRegister);
 router.delete("/delete-user/:id", isUser, deleteUserAccount);
@@ -53,21 +18,9 @@ router.get("/get-all-post", usermiddleare, getAllPost);
 router.get("/get-post-by-user", usermiddleare, getAllPostByUserId);
 router.post("/mutual-post", usermiddleare, userMutualPost);
 router.get("/get-all-mutual-post", usermiddleare, getAllFormPost);
-router.get(
-  "/get-all-mutual-post-byuser",
-  usermiddleare,
-  getAllFormPostByUserId
-);
-router.get(
-  "/get-search/mutual-using-division",
-  usermiddleare,
-  getSeachMutualpostUsingDvision
-);
-router.get(
-  "/get-search/mutual-using-wantedlobby",
-  usermiddleare,
-  getSeachMutualpostUsingwantedLobby
-);
+router.get("/get-all-mutual-post-byuser", usermiddleare, getAllFormPostByUserId);
+router.get("/get-search/mutual-using-division", usermiddleare, getSeachMutualpostUsingDvision);
+router.get("/get-search/mutual-using-wantedlobby", usermiddleare, getSeachMutualpostUsingwantedLobby);
 router.put("/user/profile-update", usermiddleare, UpdateUserProfile);
 
 // important Links

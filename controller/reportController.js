@@ -1,12 +1,13 @@
 const User = require("../model/user");
 const Report = require("../model/report");
 const sendReportMail = require("../email-templates/reportEmail");
+const { sendMessage } = require("../services/notification");
+const Post = require("../model/post");
 
 const reportPost = async (req, res) => {
   try {
     const { reportedUser, reportedPost, reason, description } = req.body;
 
-    console.log(req.userId);
     const newReport = new Report({
       reportedBy: req.userId, // Assuming admin info is stored in req.user
       reportedUser,
@@ -17,15 +18,22 @@ const reportPost = async (req, res) => {
 
     await newReport.save();
 
+    // console.log("reportedUser: ", reportedUser);
+
     const user = await User.findById(reportedUser);
 
-    console.log(user);
+    const checkPost = await Post.findById(reportedPost);
+
+    // console.log(user);
 
     const userEmail = user.email;
     const subject = "Your Post Has Been Reported";
     const message = `Your post has been reported for ${reason}. Please review our guidelines and avoid posting inappropriate content.`;
 
     sendReportMail(userEmail, subject, message);
+
+
+    await sendMessage(reportedUser, checkPost?.content, checkPost?.content, "report", user?.fcmToken, req?.userId, checkPost?.thumnail)
 
     return res.status(201).json({ message: "Report submitted successfully", data: newReport });
   } catch (error) {

@@ -1,18 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isAdmin } = require("../../middleware/rolebaseuserValidate");
-const {
-  UserRegister,
-  UserLogin,
-  getUser,
-  getAllUsers,
-  getUserById,
-  UpdateUser,
-  deleteUser,
-  ForGetPassword,
-  VeriFyOTP,
-  UserLoginOTP_Verify,
-} = require("../../controller/admin/adminController");
+const { UserRegister, UserLogin, getUser, getAllUsers, getUserById, UpdateUser, deleteUser, ForGetPassword, VeriFyOTP, UserLoginOTP_Verify, } = require("../../controller/admin/adminController");
 
 //admin
 router.post("/register", UserRegister);

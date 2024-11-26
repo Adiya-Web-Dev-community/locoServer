@@ -40,6 +40,7 @@ const UserRegister = async (req, res) => {
     });
   }
 };
+
 const UserLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -50,28 +51,25 @@ const UserLogin = async (req, res) => {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid Email credentials" });
+      return res.status(401).json({ success: false, message: "Invalid Email credentials" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid Password credentials" });
+      return res.status(401).json({ success: false, message: "Invalid Password credentials" });
     }
-    await User.findByIdAndUpdate(user._id, { otp: OTP }, { new: true });
-    const sentmail = await SendOTP(email, OTP);
 
-    console.log(email, OTP);
-
-    if (!sentmail.success) {
-      return res.status(403).json({
-        success: false,
-        message: "Something Went Wrong While Sending OTP ",
-      });
+    if (!user?.role === "admin") {
+      return res.status(401).json({ success: false, message: "Invalid Access credentials!" })
     }
+    // await User.findByIdAndUpdate(user._id, { otp: OTP }, { new: true });
+    // const sentmail = await SendOTP(email, OTP);
+
+    // console.log(email, OTP);
+
+    /* if (!sentmail.success) {
+      return res.status(403).json({ success: false, message: "Something Went Wrong While Sending OTP ", });
+    } */
     // const token = jwt.sign(
     //   { _id: user._id, email: user?.email, role: user?.role },
     //   process.env.JWT_SECRET_KEY,
@@ -80,9 +78,9 @@ const UserLogin = async (req, res) => {
     //   }
     // );
 
-    return res
-      .status(200)
-      .json({ success: true, message: "OTP has been sent on you email " });
+    const token = jwt.sign({ _id: user._id, email: user?.email, role: user?.role }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRE_TIME, });
+    return res.cookie("authorization", token, { httpOnly: true, expires: new Date(Date.now() + 240 * 60 * 60 * 1000), }).status(200).json({ success: true, message: "Login successful", token: token });
+    // return res.status(200).json({ success: true, message: "OTP has been sent on you email " });
 
     // return res
     //   .cookie("authorization", token, {
@@ -92,47 +90,32 @@ const UserLogin = async (req, res) => {
     //   .status(200)
     //   .json({ success: true, message: "Login successful", token: token });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
+
+
 const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.userId)
-      .select("-password")
-      .select("-otp");
+    const user = await User.findById(req.userId).select("-password").select("-otp");
     if (!user) {
-      return res
-        .status(403)
-        .json({ success: false, message: "user Not Found" });
+      return res.status(403).json({ success: false, message: "user Not Found" });
     }
     return res.status(200).json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
 const getAllUsers = async (req, res) => {
   try {
-    const user = await User.find({ role: "user" })
-      .select("-password")
-      .select("-otp");
+    const user = await User.find({ role: "user" }).select("-password").select("-otp");
     if (!user?.length > 0) {
-      return res
-        .status(403)
-        .json({ success: false, message: "user Not Found" });
+      return res.status(403).json({ success: false, message: "user Not Found" });
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -141,40 +124,26 @@ const getUserById = async (req, res) => {
   try {
     const user = await User.findById(id).select("-password").select("-otp");
     if (!user) {
-      return res
-        .status(403)
-        .json({ success: false, message: "user Not Found" });
+      return res.status(403).json({ success: false, message: "user Not Found" });
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 const UpdateUser = async (req, res) => {
   const { id } = req.params;
   const data = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { $set: data },
-      { new: true }
-    ).select("-password");
+    const updatedUser = await User.findByIdAndUpdate(id, { $set: data }, { new: true }).select("-password");
 
     if (!updatedUser) {
       return res.status(404).send({ message: "User not found" });
     }
 
-    res
-      .status(202)
-      .send({ success: true, message: "user Updated", data: updatedUser });
+    res.status(202).send({ success: true, message: "user Updated", data: updatedUser });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 const deleteUser = async (req, res) => {
@@ -266,20 +235,8 @@ const UserLoginOTP_Verify = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid OTP" });
     }
 
-    const token = jwt.sign(
-      { _id: user._id, email: user?.email, role: user?.role },
-      process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: process.env.JWT_EXPIRE_TIME,
-      }
-    );
-    return res
-      .cookie("authorization", token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 240 * 60 * 60 * 1000),
-      })
-      .status(200)
-      .json({ success: true, message: "Login successful", token: token });
+    const token = jwt.sign({ _id: user._id, email: user?.email, role: user?.role }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRE_TIME, });
+    return res.cookie("authorization", token, { httpOnly: true, expires: new Date(Date.now() + 240 * 60 * 60 * 1000), }).status(200).json({ success: true, message: "Login successful", token: token });
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -1,17 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {
-  createVideoCategory,
-  getAllVideoCategory,
-  UpdateVideoCategory,
-  deleteVideoCategory,
-  UploadVideo,
-  GetALLVideo,
-  GetVideoByCategory,
-  GetVideoById,
-  UpdateVideo,
-  deleteVideo,
-} = require("../../controller/admin/videoController");
+const { createVideoCategory, getAllVideoCategory, UpdateVideoCategory, deleteVideoCategory, UploadVideo, GetALLVideo, GetVideoByCategory, GetVideoById, UpdateVideo, deleteVideo, } = require("../../controller/admin/videoController");
 
 
 router.post("/video/create-category", createVideoCategory);

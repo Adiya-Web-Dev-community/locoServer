@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 mongoose.set("strictQuery", false);
 require("dotenv").config();
 const { Server } = require("socket.io");
@@ -24,7 +22,9 @@ const DailyTaskRoute = require("./route/admin/dailytaskRoute.js");
 const quiztestRoute = require("./route/quiztestRoutes.js");
 const reportRoute = require("./route/reportRoute.js");
 const settingRouter = require("./route/admin/setting.js");
+const notifyRouter = require("./route/notification.js");
 const server = createServer(app);
+// const { app, server } = require('./soket/socket.js')
 const io = new Server(server, {
   cors: ["http://3.27.111.244", "http://localhost:8080"],
 });
@@ -35,6 +35,8 @@ const io = new Server(server, {
 //   allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
 // }));
 
+app.use(cors());
+app.use(bodyParser.json());
 app.get("/", (req, res) => {
   res.send("WebSocket server is running");
 });
@@ -61,6 +63,8 @@ app.use("/api/admin", testYourSelfRoute);
 app.use("/api/admin", DailyTaskRoute);
 app.use("/api/admin", reportRoute);
 app.use("/api/admin", settingRouter);
+app.use('/api/notification', notifyRouter)
+
 
 server.listen(process.env.PORT, (port) => {
   console.log(`Server is running on port ${process.env.PORT}`);
