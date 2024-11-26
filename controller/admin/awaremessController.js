@@ -1,5 +1,6 @@
 const AwarenessCategory = require("../../model/awareness/awarenessCategoryModel");
 const Awareness = require("../../model/awareness/awarenessModel");
+const { sendNotifcationToAllUsers } = require("../notification");
 
 const createCategory = async (req, res) => {
   try {
@@ -50,18 +51,23 @@ const deleteCategory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 const CreateAwareNess = async (req, res) => {
   try {
     const response = await Awareness.create(req.body);
     if (response) {
-      res.status(201).json({ success: true, data: response, message: "Awareness Uploaded" });
-    } else {
-      res.status(400).json({ success: false, message: "Awareness not Uploaded" });
+
+      await sendNotifcationToAllUsers(req?.body?.title, req.body?.description, "awareness", req.userId, req?.body?.image)
+      return res.status(201).json({ success: true, data: response, message: "Awareness Uploaded" });
     }
+    return res.status(400).json({ success: false, message: "Awareness not Uploaded" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 const getAllAwareness = async (req, res) => {
   try {
     const response = await Awareness.find();
@@ -73,9 +79,11 @@ const getAllAwareness = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 const getAwarenessById = async (req, res) => {
   // console.log("calling................................................................");
-  
+
   const { id } = req.params;
   try {
     const response = await Awareness.findById(id);

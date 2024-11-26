@@ -26,7 +26,7 @@ exports.getNotificationById = async (req, res) => {
 
 
 
-exports.sendNotifcationToAllUsers = async (title, description, type, senderId) => {
+exports.sendNotifcationToAllUsers = async (title, description, type, senderId, image) => {
 
 
     try {
@@ -34,10 +34,23 @@ exports.sendNotifcationToAllUsers = async (title, description, type, senderId) =
 
         if (users.length > 0) {
             users.forEach(async (user) => {
-                await sendMessage(user._id, title, description, type, user?.fcmToken, senderId)
+                await sendMessage(user._id, title, description, type, user?.fcmToken, senderId, image)
             })
         }
         // sendMessage(sender, reciver, title, content, "blog")
+    } catch (error) {
+        return error.message
+    }
+}
+
+exports.sendMututalNotification = async (title, description, type, senderId, division) => {
+    try {
+        const users = await User.find({ $or: [{ designation: division },], });
+        if (users?.length > 0) {
+            users.forEach(async (user) => {
+                await sendMessage(user._id, title, description, type, user?.fcmToken, senderId)
+            })
+        }
     } catch (error) {
         return error.message
     }

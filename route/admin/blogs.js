@@ -1,30 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  createMainCategory,
-  createSubCategory,
-  createSubSubCategory,
-  createInnerCategory,
-  GetBlogCategory,
-  updateMainCategory,
-  updateSubCategory,
-  updateSubSubCategory,
-  updateInnerCategory,
-  deleteMainCategory,
-  deleteSubCategory,
-  deleteSubSubCategory,
-  deleteInnerCategory,
-  createBlogMainCategory,
-  createBlogSubCategory,
-  createBlogSubSubCategory,
-  createBlogInnerCategory,
-  CreateBlogs, GetUserBlog,
-  GetAllBlogs,
-  DeleteBlogById,
-  UpdateBlogById,
-  GetBlogById,
-  GetBlogBySlug
+const { createMainCategory, createSubCategory, createSubSubCategory, createInnerCategory, GetBlogCategory, updateMainCategory, updateSubCategory, updateSubSubCategory, updateInnerCategory, deleteMainCategory,
+  deleteSubCategory, deleteSubSubCategory, deleteInnerCategory, createBlogMainCategory, createBlogSubCategory, createBlogSubSubCategory, createBlogInnerCategory, CreateBlogs, GetUserBlog, GetAllBlogs, DeleteBlogById, UpdateBlogById, GetBlogById, GetBlogBySlug
 } = require("../../controller/admin/blogs");
 
 router.get("/blog/userblog", GetUserBlog);

@@ -535,7 +535,9 @@ const CreateBlogs = async (req, res) => {
 
     await userBlog.save();
 
-    await sendNotifcationToAllUsers(title, content, "blog")
+    const admin = await User.findOne({ role: 'admin' })
+
+    await sendNotifcationToAllUsers(title, content, "blog", admin?._id, thumnail)
     // sendMessage(sender, reciver, title, content, "blog")
 
     res.status(201).json({ success: true, data: userBlog, message: "Blog Created" });
@@ -547,30 +549,19 @@ const CreateBlogs = async (req, res) => {
 const GetUserBlog = async (req, res) => {
   try {
     const userBlog = await UserBlogs.find()
-      .populate({
-        path: "subCategories.blogs",
-        model: "blog",
-      })
-      .populate({
-        path: "subCategories.subSubCategories.blogs",
-        model: "blog",
-      })
-      .populate({
-        path: "subCategories.subSubCategories.innerCategories.blogs",
-        model: "blog",
-      })
-      .populate({
-        path: "blogs",
-        model: "blog",
-      });
+      .populate({ path: "subCategories.blogs", model: "blog", })
+      .populate({ path: "subCategories.subSubCategories.blogs", model: "blog", })
+      .populate({ path: "subCategories.subSubCategories.innerCategories.blogs", model: "blog", })
+      .populate({ path: "blogs", model: "blog", });
     if (!userBlog.length > 0) {
-      res.status(404).json("User Blog Not Found");
+      return res.status(404).json("User Blog Not Found");
     }
     res.status(200).json(userBlog);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 const GetAllBlogs = async (req, res) => {
   try {
     const response = await Blog.find();

@@ -8,6 +8,8 @@ const TestYourSelf = require("../model/test_yourself/text_yourself");
 const TestYourSelfQuestion = require("../model/test_yourself/testYourSelfQuestionModel");
 const Quiz = require("../model/quiz/quizModel");
 const QuizQuestion = require("../model/quiz/quizquestions");
+const { sendMessage } = require("../services/notification");
+const { sendNotifcationToAllUsers, sendMututalNotification } = require("./notification");
 
 
 const UserRegister = async (req, res) => {
@@ -39,8 +41,8 @@ const UserLogin = async (req, res) => {
   const { email, password, fcmToken } = req.body;
 
 
-  console.log("================================================= login ===============================================");
-  console.log("req.body: ", req.body);
+  // console.log("================================================= login ===============================================");
+  // console.log("req.body: ", req.body);
 
   try {
     const user = await User.findOne({ email: email });
@@ -79,11 +81,7 @@ const getUser = async (req, res) => {
     }
     return res.status(200).json({ success: true, data: user });
   } catch (error) {
-<<<<<<< HEAD
     return res.status(500).json({ success: false, message: error.message, });
-=======
-    res.status(500).json({ success: false, message: error.message, });
->>>>>>> 1b63191 (notification and account delete)
   }
 };
 
@@ -110,14 +108,12 @@ const userPost = async (req, res) => {
   const { thumnail, content, mediatype } = req.body;
 
   try {
-    const newPost = new Post({
-      thumnail: thumnail,
-      mediatype: mediatype,
-      content: content,
-      user: req.userId,
-    });
+    const newPost = new Post({ thumnail: thumnail, mediatype: mediatype, content: content, user: req.userId, });
 
     await newPost.save();
+
+    await sendNotifcationToAllUsers("One New Post Created Recently", content, "post", req.userId, thumnail)
+
     res.status(201).json({ success: true, message: "post created successfully", data: newPost, });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message, });
@@ -144,7 +140,7 @@ const getAllPostByUserId = async (req, res) => {
   const userId = req.userId;
   try {
     const response = await Post.find({ user: userId });
-    console.log("lengthof datah", response?.length);
+    // console.log("lengthof datah", response?.length);
     if (!response.length > 0) {
       return res.status(404).json({ success: false, message: "Data Not Found" });
     }
@@ -156,45 +152,18 @@ const getAllPostByUserId = async (req, res) => {
 
 
 const userMutualPost = async (req, res) => {
-<<<<<<< HEAD
   const { name, email, mobile, currentdivision, designation, currentlobby, wantedlobby, wanteddivision, } = req.body;
 
   try {
     const newMutual = new Mutual({ userId: req.userId, name: name, email: email, mobile: mobile, currentdivision: currentdivision, designation: designation, currentlobby: currentlobby, wantedlobby: wantedlobby, wanteddivision: wanteddivision, });
     await newMutual.save();
+    //  ================================================================================================== newmutual ==================================================================================================
+    // await sendMututalNotification("One New Mutual Post Created Recently", name, "mutual", req.userId, null)
+    await sendMututalNotification(`A mutual users request ${name}`, `A mutual request rises for ${wanteddivision && "division"}: ${wanteddivision && wanteddivision}`, "mutual", req.userId, wanteddivision)
 
     return res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message, });
-=======
-  const {
-    name,
-    email,
-    mobile,
-    currentdivision,
-    designation,
-    currentlobby,
-    wantedlobby,
-    wanteddivision,
-  } = req.body;
-  try {
-    const newMutual = new Mutual({
-      userId: req.userId,
-      name: name,
-      email: email,
-      mobile: mobile,
-      currentdivision: currentdivision,
-      designation: designation,
-      currentlobby: currentlobby,
-      wantedlobby: wantedlobby,
-      wanteddivision: wanteddivision,
-    });
-
-    await newMutual.save();
-    res.status(201).json({ success: true, message: "post created successfully", data: newMutual, });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message, });
->>>>>>> 1b63191 (notification and account delete)
   }
 };
 
@@ -221,6 +190,13 @@ const LikePosts = async (req, res) => {
       return res.status(404).json({ success: false, message: "Post not found" });
     }
 
+    const checkUser = await User.findById(post?.user)
+
+    if (checkUser) {
+      await sendMessage(post?.user, post?.thumnail, post?.content, "post like", checkUser?.fcmToken, req?.userId)
+    }
+
+
     res.status(200).json({ success: true, message: "Post liked successfully", data: post, });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message, });
@@ -242,6 +218,11 @@ const CommentPost = async (req, res) => {
     post.comments.push(newComment);
     await post.save();
 
+    const checkUser = await User.findById(post?.user)
+
+    if (checkUser) {
+      await sendMessage(post?.user, post?.thumnail, post?.content, "post comment", checkUser?.fcmToken, req?.userId)
+    }
     res.status(200).json({ success: true, message: "Comment added successfully", data: post, });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message, });
@@ -286,20 +267,11 @@ const getSeachMutualpostUsingDvision = async (req, res) => {
     });
 
     if (!response.length > 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
-    res.status(200).json({
-      success: true,
-      message: "get post Successfully",
-      data: response,
-    });
+    res.status(200).json({ success: true, message: "get post Successfully", data: response, });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message, });
   }
 };
 
@@ -347,28 +319,15 @@ const savePostInUser = async (req, res) => {
   try {
     const { postId } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { $push: { savePosts: postId } },
-      { new: true }
-    ).populate("savePosts");
+    const updatedUser = await User.findByIdAndUpdate(id, { $push: { savePosts: postId } }, { new: true }).populate("savePosts");
 
     if (!updatedUser) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Saved post updated successfully",
-      data: updatedUser,
-    });
+    res.status(200).json({ success: true, message: "Saved post updated successfully", data: updatedUser, });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -377,28 +336,15 @@ const removePostFromUser = async (req, res) => {
   try {
     const { postId } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { $pull: { savePosts: postId } },
-      { new: true }
-    ).populate("savePosts");
+    const updatedUser = await User.findByIdAndUpdate(id, { $pull: { savePosts: postId } }, { new: true }).populate("savePosts");
 
     if (!updatedUser) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Post removed successfully",
-      data: updatedUser,
-    });
+    res.status(200).json({ success: true, message: "Post removed successfully", data: updatedUser, });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -407,9 +353,7 @@ const getAllQuiz = async (req, res) => {
   try {
     const response = await Quiz.find().populate("questions");
     if (!response?.length > 0) {
-      return res
-        .status(200)
-        .json({ success: false, mesaage: "Quiz Not Found" });
+      return res.status(200).json({ success: false, mesaage: "Quiz Not Found" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -423,9 +367,7 @@ const getSingleQuiz = async (req, res) => {
   try {
     const response = await Quiz.findById(id).populate("questions");
     if (!response) {
-      return res
-        .status(200)
-        .json({ success: false, mesaage: "Quiz Not Found" });
+      return res.status(200).json({ success: false, mesaage: "Quiz Not Found" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -438,9 +380,7 @@ const getAllTest = async (req, res) => {
   try {
     const response = await TestYourSelf.find().populate("questions");
     if (!response?.length > 0) {
-      return res
-        .status(200)
-        .json({ success: false, mesaage: "Test Not Found" });
+      return res.status(200).json({ success: false, mesaage: "Test Not Found" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -454,9 +394,7 @@ const getSingleTest = async (req, res) => {
   try {
     const response = await TestYourSelf.findById(id).populate("questions");
     if (!response) {
-      return res
-        .status(200)
-        .json({ success: false, mesaage: "Test Not Found" });
+      return res.status(200).json({ success: false, mesaage: "Test Not Found" });
     }
     res.status(200).json(response);
   } catch (error) {
@@ -473,9 +411,7 @@ const UpdateAnswer = async (req, res) => {
     const question = await QuizQuestion.findById(id);
 
     if (!question) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Question not found" });
+      return res.status(404).json({ success: false, message: "Question not found" });
     }
 
     question.actualresult = answer;
@@ -483,16 +419,9 @@ const UpdateAnswer = async (req, res) => {
 
     await question.save();
 
-    res.status(200).json({
-      success: true,
-      data: question,
-      message: "Answer submitted successfully",
-    });
+    res.status(200).json({ success: true, data: question, message: "Answer submitted successfully", });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 
@@ -503,37 +432,21 @@ const QuizComplete = async (req, res) => {
   try {
     const quiz = await Quiz.findById(id).populate("questions");
     if (!quiz) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Quiz not found" });
+      return res.status(404).json({ success: false, message: "Quiz not found" });
     }
-    const answeredQuestions = quiz?.questions.filter(
-      (q) => q.isTrue !== undefined
-    );
-    const rightAnswers = answeredQuestions.filter((q) => q.isTrue).length;
-    const wrongAnswers = answeredQuestions.length - rightAnswers;
-    const score = (rightAnswers / quiz.questions.length) * 100;
-    const updatedQuiz = await Quiz.findByIdAndUpdate(
-      id,
-      {
-        rightanswers: rightAnswers,
-        wronganswers: wrongAnswers,
-        score: score,
-        isComplete: true,
-      },
-      { new: true }
-    );
+    const answeredQuestions = quiz?.questions.filter((q) => q.isTrue !== undefined);
 
-    res.status(200).json({
-      success: true,
-      message: "Quiz results updated successfully",
-      data: updatedQuiz,
-    });
+    const rightAnswers = answeredQuestions.filter((q) => q.isTrue).length;
+
+    const wrongAnswers = answeredQuestions.length - rightAnswers;
+
+    const score = (rightAnswers / quiz.questions.length) * 100;
+
+    const updatedQuiz = await Quiz.findByIdAndUpdate(id, { rightanswers: rightAnswers, wronganswers: wrongAnswers, score: score, isComplete: true, }, { new: true });
+
+    res.status(200).json({ success: true, message: "Quiz results updated successfully", data: updatedQuiz, });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message, });
   }
 };
 

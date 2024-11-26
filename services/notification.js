@@ -7,15 +7,16 @@ admin.initializeApp({
 })
 
 
-exports.sendMessage = async (reciver, title, description, type, fcmToken, sender) => {
-    console.log("=============== sendMessage ============");
-    console.log("sender: ", sender, "reciver: ", reciver, "title: ", title, " description: ", description, " type: ", type, "fcmToken: ", fcmToken);
+exports.sendMessage = async (reciver, title, description, type, fcmToken, sender, image) => {
+    // console.log("=============== sendMessage ============");
+    // console.log("sender: ", sender, "reciver: ", reciver, "title: ", title, " description: ", description, " type: ", type, "fcmToken: ", fcmToken);
 
-    console.log("fcmToken: ", fcmToken);
+    // console.log("fcmToken: ", fcmToken);
     const messageC = {
         notification: {
             title: title,
             body: description,
+            image: image ? image : '',
         },
         data: {
             type: type

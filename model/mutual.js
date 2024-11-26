@@ -16,7 +16,7 @@ const mutualPostrModel = new mongoose.Schema(
     designation: { type: String },
     currentlobby: { type: String },
     wantedlobby: { type: String },
-    wanteddivision: { type: String },
+    wanteddivision: { type: String }, 
   },
   { timestamps: true }
 );

@@ -20,7 +20,6 @@ const userComplteteQuiz = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error.message, });
   }
-
 };
 
 const userComplteteTest = async (req, res) => {
