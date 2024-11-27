@@ -264,14 +264,14 @@ const deleteInnerCategory = async (req, res) => {
 const GetBlogCategory = async (req, res) => {
   try {
     const response = await BlogCategoryModel.find().sort({ createdAt: -1 });
-    if (!response)
-      return res
-        .status(404)
-        .json({ success: false, message: "Category Not Found" });
+    // console.log("response: ", response);
 
+    if (!response) {
+      return res.status(404).json({ success: false, message: "Category Not Found" });
+    }
     res.status(201).json({ success: true, data: response });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -548,11 +548,7 @@ const CreateBlogs = async (req, res) => {
 
 const GetUserBlog = async (req, res) => {
   try {
-    const userBlog = await UserBlogs.find()
-      .populate({ path: "subCategories.blogs", model: "blog", })
-      .populate({ path: "subCategories.subSubCategories.blogs", model: "blog", })
-      .populate({ path: "subCategories.subSubCategories.innerCategories.blogs", model: "blog", })
-      .populate({ path: "blogs", model: "blog", });
+    const userBlog = await UserBlogs.find().populate({ path: "subCategories.blogs", model: "blog", }).populate({ path: "subCategories.subSubCategories.blogs", model: "blog", }).populate({ path: "subCategories.subSubCategories.innerCategories.blogs", model: "blog", }).populate({ path: "blogs", model: "blog", });
     if (!userBlog.length > 0) {
       return res.status(404).json("User Blog Not Found");
     }

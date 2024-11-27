@@ -17,8 +17,7 @@ router.put("/blog/update-blog/:id", UpdateBlogById);
 router.delete("/blog/delete-blog/:id", DeleteBlogById);
 router.get("/blog/get-blog-using-Id/:id", GetBlogById);
 router.get("/blog/get-blog-by-slug/:slug", GetBlogBySlug);
-
-
+ 
 router.post("/main-category", createMainCategory);
 
 

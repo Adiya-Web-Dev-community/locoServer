@@ -5,7 +5,7 @@ const usermiddleare = require("../middleware/accoundvalidate");
 const { UserRegister, UserLogin, UpdateUserProfile, getUser, userPost, getAllPost, getAllPostByUserId, userMutualPost, getAllFormPost, getAllFormPostByUserId, getSeachMutualpostUsingwantedLobby, getSeachMutualpostUsingDvision, LikePosts, savePostInUser, removePostFromUser, CommentPost, getAllQuiz, TestComplete, UpdateTestAnswer, getSingleQuiz, getSingleTest, getAllTest, UpdateAnswer, QuizComplete, userComplteteQuiz, userComplteteTest, deleteUserAccount } = require("../controller/userController");
 const { getAll } = require("../controller/admin/implinks.Controller");
 const { getAllCategory, getAwarenessById, getAwarenessByCategory, } = require("../controller/admin/awaremessController");
-const { GetUserBlog } = require("../controller/admin/blogs");
+const { GetUserBlog, GetBlogCategory } = require("../controller/admin/blogs");
 const { getAllcompany, getSingleProduct, getSinglecompany, getAllProsucts, } = require("../controller/admin/sponsorController");
 const { getAllVideoCategory, GetVideoByCategory, GetVideoById, } = require("../controller/admin/videoController");
 
@@ -33,6 +33,7 @@ router.get("/awareness/category/:category", isUser, getAwarenessByCategory);
 
 //blog
 router.get("/blog/userblog", isUser, GetUserBlog);
+router.get("/blog/category", GetBlogCategory);
 
 //sponsor
 router.get("/sponsor/company", isUser, getAllcompany);

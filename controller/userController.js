@@ -574,12 +574,9 @@ const userComplteteTest = async (req, res) => {
 };
 
 const deleteUserAccount = async (req, res) => {
-  // console.log("req.params: ", req.params);
-
   const id = req.params.id
   try {
     const checkUser = await User.findById(id)
-    // console.log("user: ", checkUser);
     if (!checkUser) {
       return res.status(404).json({ success: false, message: "User not found", });
     }
@@ -587,7 +584,7 @@ const deleteUserAccount = async (req, res) => {
 
     const result = await User.findByIdAndDelete(id)
     if (result) {
-      return res.status(200).json({ success: true, message: "Test data added to user successfully", data: response, })
+      return res.status(200).json({ success: true, message: "Test data added to user successfully", data: result, })
     }
     return res.status(400).json({ success: false, message: "Failed to delte user", });
 
